@@ -36,3 +36,7 @@
 
 # CMake Build directories
 cmake-build*
+
+# local dev environment
+.dev
+dev.Dockerfile
