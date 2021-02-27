@@ -11,6 +11,13 @@
 namespace VA {
 
 struct RectTLWH {
+    RectTLWH(const cv::Rect& box, int w, int h) :
+        top{(float)box.y / (float)h},
+        left{(float)box.x / (float)w},
+        width{(float)box.width / (float)w},
+        height{(float)box.height / (float)h}
+    {}
+
     float top;
     float left;
     float width;

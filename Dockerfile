@@ -1,7 +1,11 @@
 FROM ubuntu:18.04
 
 RUN apt-get update
-RUN apt-get install -y build-essential autoconf libtool pkg-config \
+RUN DEBIAN_FRONTEND="noninteractive" apt-get install -y \
+    build-essential \
+    autoconf \
+    libtool \
+    pkg-config \
     wget \
     git \
     libssl-dev \
