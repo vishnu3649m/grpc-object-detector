@@ -4,7 +4,8 @@ RUN apt-get update
 RUN apt-get install -y build-essential autoconf libtool pkg-config \
     wget \
     git \
-    libssl-dev
+    libssl-dev \
+    libopencv-dev
 
 RUN wget -q -O cmake-linux.sh https://github.com/Kitware/CMake/releases/download/v3.17.0/cmake-3.17.0-Linux-x86_64.sh
 RUN sh cmake-linux.sh -- --skip-license

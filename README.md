@@ -1,5 +1,6 @@
 gRPC Video Analyzer
 -------------------
+[![Build Status](https://travis-ci.com/vishnu-muthiah/grpc-video-analyser.svg?branch=main)](https://travis-ci.com/vishnu-muthiah/grpc-video-analyser)
 
 A gRPC-based server that runs deep learning-based object detectors & trackers on your
 videos/images to detect, count or track objects you want.
