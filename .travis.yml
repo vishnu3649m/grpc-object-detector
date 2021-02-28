@@ -4,6 +4,8 @@ services:
   - docker
 
 before_install:
+  - echo 'DOCKER_OPTS="$DOCKER_OPTS --registry-mirror=https://mirror.gcr.io"'
+  - sudo service docker restart
   - docker build -t grpc-va-server:latest .
 
 install: skip
