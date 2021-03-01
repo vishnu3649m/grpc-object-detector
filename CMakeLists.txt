@@ -14,9 +14,9 @@ add_library(loguru STATIC libs/loguru/loguru.cpp libs/loguru/loguru.hpp)
 
 # Core VA server lib
 add_library(va_server_core STATIC
-            src/CascadeClassifier.cpp)
-target_include_directories(va_server_core PUBLIC include libs/)
-target_link_libraries(va_server_core PUBLIC loguru pthread dl ${OPENCV_LIBRARIES})
+        src/FaceEyesDetector.cpp)
+target_include_directories(va_server_core PUBLIC include libs/loguru libs/CLI11/include libs/abseil-cpp/)
+target_link_libraries(va_server_core PUBLIC loguru pthread dl ${OPENCV_LIBRARIES} absl::strings absl::str_format)
 
 add_executable(grpc_va_server src/main.cpp)
 target_link_libraries(grpc_va_server PUBLIC loguru va_server_core pthread dl ${OPENCV_LIBRARIES})

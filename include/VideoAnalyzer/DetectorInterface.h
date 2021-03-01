@@ -34,7 +34,8 @@ class DetectorInterface {
 public:
     virtual void initialize() = 0;
     virtual std::vector<Detection> detect(const cv::Mat & img) = 0;
-    virtual std::string class_id_to_label(int class_id) = 0;
+    virtual std::string class_id_to_label(int class_id) const = 0;
+    virtual bool is_initialized() const = 0;
     virtual ~DetectorInterface() = default;
 };
 

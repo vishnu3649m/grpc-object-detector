@@ -5,8 +5,10 @@
 #include <gtest/gtest.h>
 #include <absl/strings/str_format.h>
 #include <opencv2/opencv.hpp>
+#include <opencv2/core/utility.hpp>
 
 #include "VideoAnalyzer/DetectorInterface.h"
+#include "VideoAnalyzer/FaceEyesDetector.h"
 
 using namespace std;
 
@@ -20,6 +22,11 @@ public:
         uniform_int_distribution distribution(0, 9);
 
         class_id = distribution(generator);
+        init = true;
+    }
+
+    bool is_initialized() const override {
+        return init;
     }
 
     vector<VA::Detection> detect(const cv::Mat & img) override {
@@ -45,36 +52,55 @@ public:
         return detections;
     }
 
-    string class_id_to_label(int class_id_) override {
+    string class_id_to_label(int class_id_) const override {
         return absl::StrFormat("class_%d", class_id_);
     }
 
 private:
     int class_id = 0;
+    bool init = false;
 };
 
+pair<VA::DetectorInterface *, string> create_detector_under_test(const string& type) {
+    if (type == "face_eyes_detector") {
+        return {new VA::FaceEyesDetector(
+                "/usr/share/opencv/haarcascades/haarcascade_frontalface_alt.xml",
+                "/usr/share/opencv/haarcascades/haarcascade_eye_tree_eyeglasses.xml"),
+                "tests/data/faces.jpg"};
+    } else {
+        return {new DummyConcreteDetector(), "tests/data/1.jpg"};
+    }
+}
 
-class DetectorInterfaceTest : public ::testing::Test {
-protected:
-    VA::DetectorInterface *detector;
-    vector<VA::Detection> detections;
-
+class DetectorInterfaceTest : public testing::TestWithParam<string> {
+public:
     DetectorInterfaceTest() {
-        detector = new DummyConcreteDetector();
-        detections = detector->detect(cv::imread("tests/data/1.jpg"));
+        auto [det_, test_file] = create_detector_under_test(GetParam());
+        detector = det_;
+        detector->initialize();
+        detections = detector->detect(cv::imread(test_file));
     }
 
     ~DetectorInterfaceTest() override {
         delete detector;
     }
+
+protected:
+    VA::DetectorInterface *detector;
+    vector<VA::Detection> detections;
 };
 
+TEST_P(DetectorInterfaceTest, CanInitializeSuccessfully) {
+    ASSERT_TRUE(detector->is_initialized());
+}
 
-TEST_F(DetectorInterfaceTest, ProducesDetections) {
+TEST_P(DetectorInterfaceTest, ProducesDetections) {
+    ASSERT_TRUE(detector->is_initialized());
     ASSERT_GT(detections.size(), 0);
 }
 
-TEST_F(DetectorInterfaceTest, ProducesNormalizedBoundingBoxes) {
+TEST_P(DetectorInterfaceTest, ProducesNormalizedBoundingBoxes) {
+    ASSERT_TRUE(detector->is_initialized());
     ASSERT_GT(detections.size(), 0);
 
     for (auto & det : detections) {
@@ -92,7 +118,8 @@ TEST_F(DetectorInterfaceTest, ProducesNormalizedBoundingBoxes) {
     }
 }
 
-TEST_F(DetectorInterfaceTest, ProducesConfidenceScoresForEachDetection) {
+TEST_P(DetectorInterfaceTest, ProducesConfidenceScoresForEachDetection) {
+    ASSERT_TRUE(detector->is_initialized());
     ASSERT_GT(detections.size(), 0);
 
     for (auto & det : detections) {
@@ -101,14 +128,16 @@ TEST_F(DetectorInterfaceTest, ProducesConfidenceScoresForEachDetection) {
     }
 }
 
-TEST_F(DetectorInterfaceTest, MapsAllDetectedObjectClassIdsToHumanReadableString) {
+TEST_P(DetectorInterfaceTest, MapsAllDetectedObjectClassIdsToValidHumanReadableStrings) {
+    ASSERT_TRUE(detector->is_initialized());
     ASSERT_GT(detections.size(), 0);
 
     for (auto & det : detections) {
-        int cls_id = det.class_id;
-        EXPECT_GE(cls_id, 0);
-        EXPECT_LE(cls_id, 9);
-        EXPECT_EQ(detector->class_id_to_label(cls_id),
-                  absl::StrFormat("class_%d", cls_id));
+        string label = detector->class_id_to_label(det.class_id);
+
+        EXPECT_NE(label, "");
     }
 }
+
+INSTANTIATE_TEST_SUITE_P(FactoryCreatedDetector, DetectorInterfaceTest,
+                         testing::Values("face_eyes_detector", "dummy"));
