@@ -2,7 +2,7 @@
 // Created by Vishnu on 18/2/21.
 //
 
-#include "VideoAnalyzer/FaceEyesDetector.h"
+#include "FaceEyesDetector.h"
 
 void VA::FaceEyesDetector::initialize() {
     class_label_map = {"face", "eye"};
