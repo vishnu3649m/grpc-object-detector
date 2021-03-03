@@ -1,0 +1,63 @@
+// Defines messages and services for detecting objects in images.
+
+
+syntax = "proto3";
+
+package VA.Grpc;
+
+message DetectableObjectsRequest {
+  // [Optional] Case-insensitive object names that users would like to be detected.
+  // Object names output by this server follow common labels found in computer vision
+  // datasets.
+  repeated string object_of_interest = 1;
+}
+
+message DetectableObjectsResponse {
+  // Objects that this VA server is able to detect in images.
+  repeated string available_object = 1;
+}
+
+message ImageDetectionRequest {
+  // Object(s) to detect; must be supported by this server. Case-insensitive.
+  repeated string object_to_detect = 1;
+  // Image to analyze as bytes. Image size must be less than 2^32 bytes.
+  bytes image = 3;
+}
+
+message Detection {
+  string object_name = 1; // human-readable name of the object
+  /**
+    How confident the detector was, as a probabilistic measure, while predicting
+    the presence of this object at this location within the frame. If the detector
+    is not capable of producing confidence scores, this will always be 0.0.
+   */
+  float confidence = 3;
+  /**
+    Coordinates indicating the region of the detected object within the image.
+    Y-axis's zeroth position is at the top of frame. Note: Some detectors might
+    predict boxes that extend out of the image's dimensions.
+   */
+  int32 top_left_x = 5;
+  int32 top_left_y = 7;
+  int32 width = 9;
+  int32 height = 11;
+}
+
+message ImageDetectionResponse {
+  repeated Detection detections = 1;
+}
+
+service ImageDetection {
+  /**
+    Returns the list of objects supported by the server. Users can send an optional
+    list of objects to check if they are supported. If sent, only supported objects
+    within the request will be returned in the reponse.
+   */
+  rpc GetDetectableObjects(DetectableObjectsRequest) returns (DetectableObjectsResponse) {}
+
+  /**
+    Runs relevant detector(s) on the provided image to detect object(s)
+    requested by the user.
+   */
+  rpc DetectImage(ImageDetectionRequest) returns (ImageDetectionResponse) {}
+}

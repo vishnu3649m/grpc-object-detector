@@ -40,3 +40,6 @@ cmake-build*
 # local dev environment
 .dev
 dev.Dockerfile
+
+# compiled protos
+protos/build

@@ -3,6 +3,10 @@
 #include <loguru.hpp>
 #include <CLI/CLI.hpp>
 #include <absl/strings/str_format.h>
+#include <grpcpp/server.h>
+#include <grpcpp/server_builder.h>
+
+#include "VideoAnalyzer/ImageDetectionService.h"
 
 using namespace std;
 
@@ -32,9 +36,16 @@ int main(int argc, char **argv) {
 
     loguru::init(argc, argv);
 
-    if (action == "start") {
-        LOG_F(INFO, "Starting gRPC server...");
-    }
+    LOG_F(INFO, "Starting gRPC server...");
+    std::string address = "127.0.0.1:8081";
+    ImageDetectionService service;
+
+    grpc::ServerBuilder builder;
+    builder.AddListeningPort(address, grpc::InsecureServerCredentials());
+    builder.RegisterService(&service);
+    std::unique_ptr<grpc::Server> server(builder.BuildAndStart());
+    LOG_F(INFO, "gRPC Video Analyzer Server listening on %s", address.c_str());
+    server->Wait();
 
     return 0;
 }
