@@ -31,5 +31,6 @@ WORKDIR /app/build/
 RUN cmake -DCMAKE_BUILD_TYPE=Release -G "CodeBlocks - Unix Makefiles" ..
 RUN make -j$(nproc)
 RUN make install
+WORKDIR /app/
 
-ENTRYPOINT ["grpc_va_server"]
+CMD ["grpc_va_server"]
