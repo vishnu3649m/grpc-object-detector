@@ -7,11 +7,17 @@ videos/images to detect, count or track objects you want.
 
 ## Introduction
 
-The main motivation for this project is to explore gRPC and to see how well it can
-be used to run video analytics.
+The main motivation for this project is to explore gRPC and to see how well-suited 
+it is for serving video analysis capabilities. Feel free to fork this repo and adapt
+this for your own video analysis applications.
 
-The aim is to first develop a simple server that takes in a video, processes each
-frame using an object detector and responds with a stream of detections.
+This server provides the following services:
+- Detection Service for Images
+    - `GetDetectableObjects`: Returns the list of objects supported by the server
+    - `DetectImage`: Detects objects of interest in the provided image
+- Detection Service for Videos _(in progress)_
+    - `GetDetectableObjects`: Returns the list of objects supported by the server
+    - `DetectObjectsPerFrame`: Detects objects of interest in every frame of the provided video file (or network-accessible stream)
+    - `CountObjects`: Detect and track unique objects of interest within the provided video file (or network-accessible stream)
 
-To test & illustrate the server, a CLI based client is provided. Maybe a web app
-will be built in the future.
+Refer to the [protos](protos) directory for exact description of all gRPC services.
