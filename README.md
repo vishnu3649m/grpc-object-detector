@@ -22,3 +22,23 @@ This server provides the following services:
     - `CountObjects`: Detect and track unique objects of interest within the provided video file (or network-accessible stream)
 
 Refer to the [protos](protos) directory for exact description of all gRPC services.
+
+## How to build & run
+
+#### Dependencies 
+- OpenCV: v3.2 or greater
+- Pthreads
+
+#### Building and Installing
+```
+git clone --recursive https://github.com/vishnu-muthiah/grpc-video-analyzer.git
+cd grpc-video-analyzer
+mkdir build && cd build
+cmake -G "CodeBlocks - Unix Makefiles" ..
+make -j $(nproc) && make install
+```
+
+#### Running
+```
+grpc_va_server start
+```
