@@ -24,7 +24,7 @@ target_link_libraries(va_server_core PUBLIC va_grpc_proto loguru pthread dl ${OP
 add_executable(grpc_va_server src/main.cpp)
 target_link_libraries(grpc_va_server PUBLIC loguru va_server_core)
 
-add_executable(test_va_server tests/test_detector_interface.cpp)
+add_executable(test_va_server tests/test_detector_interface.cpp tests/test_img_det_service.cpp)
 target_link_libraries(test_va_server PUBLIC gtest_main va_server_core absl::strings absl::str_format)
 target_include_directories(test_va_server PUBLIC src libs/googletest/googletest/include libs/abseil-cpp)
 add_test(NAME va_server_tests COMMAND test_va_server)
