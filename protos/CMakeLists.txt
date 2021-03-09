@@ -24,6 +24,7 @@ set(_REFLECTION gRPC::grpc++_reflection)
 find_program(_GRPC_CPP_PLUGIN_EXECUTABLE grpc_cpp_plugin)
 
 message(STATUS "Configuring Makefile for protos in ${CMAKE_CURRENT_SOURCE_DIR}")
+file(MAKE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/build")
 set(image_detection_proto_srcs "${CMAKE_CURRENT_SOURCE_DIR}/build/image_detection.pb.cc")
 set(image_detection_proto_hdrs "${CMAKE_CURRENT_SOURCE_DIR}/build/image_detection.pb.h")
 set(image_detection_grpc_srcs "${CMAKE_CURRENT_SOURCE_DIR}/build/image_detection.grpc.pb.cc")
