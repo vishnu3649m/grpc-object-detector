@@ -10,8 +10,19 @@
 grpc::Status ImageDetectionService::GetDetectableObjects(::grpc::ServerContext *context,
                                                          const ::VA::Grpc::DetectableObjectsRequest *request,
                                                          ::VA::Grpc::DetectableObjectsResponse *response) {
-    response->add_available_object(std::string("face"));
-    response->add_available_object(std::string("eye"));
+    std::unordered_set<std::string> valid_objects {"face", "eye"};
+
+    if (request->object_of_interest_size()) {
+        for (auto obj : request->object_of_interest()) {
+            std::transform(obj.begin(), obj.end(), obj.begin(), [](unsigned char c){ return std::tolower(c); });
+            if (valid_objects.count(obj))
+                response->add_available_object(obj);
+        }
+    } else {
+        for (const auto &obj : valid_objects)
+            response->add_available_object(obj);
+    }
+
     return grpc::Status::OK;
 }
 

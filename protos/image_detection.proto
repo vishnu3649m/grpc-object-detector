@@ -49,9 +49,10 @@ message ImageDetectionResponse {
 
 service ImageDetection {
   /**
-    Returns the list of objects supported by the server. Users can send an optional
-    list of objects to check if they are supported. If sent, only supported objects
-    within the request will be returned in the reponse.
+    Returns the list of objects supported by the server.
+
+    Users can send an optional list of objects to check if they are supported.
+    If sent, only supported objects within the request will be returned in the reponse.
    */
   rpc GetDetectableObjects(DetectableObjectsRequest) returns (DetectableObjectsResponse) {}
 
