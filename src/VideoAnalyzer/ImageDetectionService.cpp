@@ -38,13 +38,12 @@ grpc::Status ImageDetectionService::DetectImage(::grpc::ServerContext *context,
         return grpc::Status(grpc::StatusCode::INVALID_ARGUMENT,
                             "Valid image could not be parsed from the provided bytes.");
 
-    for (const auto & obj : request->object_to_detect()) {
-        std::string obj_lowercase;
-        std::transform(obj.begin(), obj.end(), obj_lowercase.begin(), [](unsigned char c){ return std::tolower(c); });
-        if (valid_objects.find(obj_lowercase) != valid_objects.end())
-            requested_objects.insert(obj_lowercase);
+    for (auto obj : request->object_to_detect()) {
+        std::transform(obj.begin(), obj.end(), obj.begin(), [](unsigned char c){ return std::tolower(c); });
+        if (valid_objects.count(obj))
+            requested_objects.insert(obj);
     }
-    if (!requested_objects.empty())
+    if (requested_objects.empty())
         return grpc::Status(grpc::StatusCode::INVALID_ARGUMENT,
                             "At least 1 object detectable by this server needs to be provided. "
                             "Refer to GetDetectableObjects RPC for supported objects.");
