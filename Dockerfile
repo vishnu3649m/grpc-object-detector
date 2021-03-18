@@ -16,7 +16,7 @@ RUN sh cmake-linux.sh -- --skip-license
 RUN rm cmake-linux.sh
 
 WORKDIR /dependencies/
-RUN git clone --recurse-submodules -b v1.33.2 https://github.com/grpc/grpc
+RUN git clone --recurse-submodules https://github.com/vishnu3649m/grpc.git
 WORKDIR /dependencies/grpc/
 RUN mkdir build
 WORKDIR /dependencies/grpc/build/
