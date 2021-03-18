@@ -1,6 +1,6 @@
 gRPC Video Analyzer
 -------------------
-[![Build Status](https://travis-ci.com/vishnu-muthiah/grpc-video-analyzer.svg?branch=main)](https://travis-ci.com/vishnu-muthiah/grpc-video-analyzer)
+[![Build Status](https://travis-ci.com/vishnu3649m/grpc-video-analyzer.svg?branch=main)](https://travis-ci.com/vishnu3649m/grpc-video-analyzer)
 ![Generic badge](https://img.shields.io/badge/os-linux-lightgrey)
 
 A gRPC-based server that runs deep learning-based object detectors & trackers on your
