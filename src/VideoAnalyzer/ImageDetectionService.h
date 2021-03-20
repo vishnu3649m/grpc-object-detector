@@ -10,13 +10,14 @@
 #include "image_detection.grpc.pb.h"
 
 class ImageDetectionService final : public ::VA::Grpc::ImageDetection::Service {
-public:
-    grpc::Status GetDetectableObjects(::grpc::ServerContext* context,
-                                      const ::VA::Grpc::DetectableObjectsRequest* request,
-                                      ::VA::Grpc::DetectableObjectsResponse* response) override;
-    grpc::Status DetectImage(::grpc::ServerContext* context,
-                             const ::VA::Grpc::ImageDetectionRequest* request,
-                             ::VA::Grpc::ImageDetectionResponse* response) override;
+ public:
+  grpc::Status GetDetectableObjects(::grpc::ServerContext *context,
+                                    const ::VA::Grpc::DetectableObjectsRequest *request,
+                                    ::VA::Grpc::DetectableObjectsResponse *response) override;
+
+  grpc::Status DetectImage(::grpc::ServerContext *context,
+                           const ::VA::Grpc::ImageDetectionRequest *request,
+                           ::VA::Grpc::ImageDetectionResponse *response) override;
 };
 
 
