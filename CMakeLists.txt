@@ -17,9 +17,24 @@ add_library(loguru STATIC libs/loguru/loguru.cpp libs/loguru/loguru.hpp)
 add_library(va_server_core STATIC
         src/VideoAnalyzer/DetectorInterface.h
         src/VideoAnalyzer/FaceEyesDetector.h src/VideoAnalyzer/FaceEyesDetector.cc
-        src/VideoAnalyzer/ImageDetectionService.cc src/VideoAnalyzer/ImageDetectionService.h)
-target_include_directories(va_server_core PUBLIC protos/build src libs/loguru libs/CLI11/include libs/abseil-cpp/)
-target_link_libraries(va_server_core PUBLIC va_grpc_proto loguru pthread dl ${OPENCV_LIBRARIES} absl::strings absl::str_format)
+        src/VideoAnalyzer/ImageDetectionService.cc src/VideoAnalyzer/ImageDetectionService.h
+        src/VideoAnalyzer/OnnxYoloDetector.cc src/VideoAnalyzer/OnnxYoloDetector.h)
+target_include_directories(va_server_core PUBLIC
+        protos/build
+        libs/loguru
+        libs/CLI11/include
+        libs/abseil-cpp
+        libs/onnxruntime/include)
+target_link_directories(va_server_core PUBLIC libs/onnxruntime/build/Linux/Release)
+target_link_libraries(va_server_core PUBLIC
+        va_grpc_proto
+        loguru
+        pthread
+        dl
+        ${OPENCV_LIBRARIES}
+        absl::strings
+        absl::str_format
+        onnxruntime)
 
 add_executable(grpc_va_server src/main.cc)
 target_link_libraries(grpc_va_server PUBLIC loguru va_server_core)

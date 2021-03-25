@@ -9,6 +9,7 @@
 
 #include "VideoAnalyzer/DetectorInterface.h"
 #include "VideoAnalyzer/FaceEyesDetector.h"
+#include "VideoAnalyzer/OnnxYoloDetector.h"
 
 using namespace std;
 
@@ -72,7 +73,11 @@ pair<VA::DetectorInterface *,
     return {new VA::FaceEyesDetector(
         "/usr/share/opencv/haarcascades/haarcascade_frontalface_alt.xml",
         "/usr/share/opencv/haarcascades/haarcascade_eye_tree_eyeglasses.xml"),
-        "tests/data/faces.jpg"};
+            "tests/data/faces.jpg"};
+  } else if (type == "yolov4") {
+    return {new VA::OnnxYoloDetector("config/yolov4.onnx",
+                                        "config/yolov4_anchors.txt"),
+            "tests/data/faces.jpg"};
   } else {
     return {new DummyConcreteDetector(), "tests/data/1.jpg"};
   }
@@ -146,5 +151,8 @@ TEST_P(DetectorInterfaceTest,
   }
 }
 
-INSTANTIATE_TEST_SUITE_P(FactoryCreatedDetector, DetectorInterfaceTest,
-                         testing::Values("face_eyes_detector", "dummy"));
+INSTANTIATE_TEST_SUITE_P(FactoryCreatedDetector,
+                         DetectorInterfaceTest,
+                         testing::Values("face_eyes_detector",
+                                         "dummy",
+                                         "yolov4"));
