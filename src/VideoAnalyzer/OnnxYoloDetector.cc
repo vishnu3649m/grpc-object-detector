@@ -1,7 +1,3 @@
-//
-// Created by Vishnu on 22/3/21.
-//
-
 #include <loguru.hpp>
 #include <absl/strings/str_split.h>
 #include <absl/strings/numbers.h>

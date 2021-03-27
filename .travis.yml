@@ -1,14 +1,23 @@
 language: c++
 
-services:
-  - docker
+os: linux
+dist: bionic
+
+addons:
+  apt:
+    update: true
+    packages:
+      - cmake
+      - pkg-config
+      - libopencv-dev
+
+compiler: gcc
 
 before_install:
-  - echo 'DOCKER_OPTS="$DOCKER_OPTS --registry-mirror=https://mirror.gcr.io"'
-  - sudo service docker restart
-  - docker build -t grpc-va-server:latest .
-
-install: skip
+  - bash tools/install_grpc.sh
 
 script:
-  - docker run --rm grpc-va-server:latest /bin/sh -c "./build/test_va_server"
+  - bash tools/build.sh
+
+after_success:
+  - ./build/test-va-server

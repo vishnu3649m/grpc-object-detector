@@ -1,5 +1,5 @@
-cmake_minimum_required(VERSION 3.15)
-project(grpc_va_server)
+cmake_minimum_required(VERSION 3.10)
+project(grpc-va-server)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -25,7 +25,7 @@ target_include_directories(va_server_core PUBLIC
         libs/CLI11/include
         libs/abseil-cpp
         libs/onnxruntime/include)
-target_link_directories(va_server_core PUBLIC libs/onnxruntime/build/Linux/Release)
+link_directories(va_server_core PUBLIC libs/onnxruntime/build/Linux/Release)
 target_link_libraries(va_server_core PUBLIC
         va_grpc_proto
         loguru
@@ -36,12 +36,12 @@ target_link_libraries(va_server_core PUBLIC
         absl::str_format
         onnxruntime)
 
-add_executable(grpc_va_server src/main.cc)
-target_link_libraries(grpc_va_server PUBLIC loguru va_server_core)
+add_executable(grpc-va-server src/main.cc)
+target_link_libraries(grpc-va-server PUBLIC loguru va_server_core)
 
-add_executable(test_va_server tests/test_detector_interface.cc tests/test_img_det_service.cc)
-target_link_libraries(test_va_server PUBLIC gtest_main va_server_core absl::strings absl::str_format)
-target_include_directories(test_va_server PUBLIC src libs/googletest/googletest/include libs/abseil-cpp)
-add_test(NAME va_server_tests COMMAND test_va_server)
+add_executable(test-va-server tests/test_detector_interface.cc tests/test_img_det_service.cc)
+target_link_libraries(test-va-server PUBLIC gtest_main va_server_core absl::strings absl::str_format)
+target_include_directories(test-va-server PUBLIC src libs/googletest/googletest/include libs/abseil-cpp)
+add_test(NAME va_server_tests COMMAND test-va-server)
 
-install(TARGETS grpc_va_server)
+install(TARGETS grpc-va-server DESTINATION /usr/local/bin)
