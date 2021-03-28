@@ -76,7 +76,8 @@ pair<VA::DetectorInterface *,
             "tests/data/faces.jpg"};
   } else if (type == "yolov4") {
     return {new VA::OnnxYoloDetector("config/yolov4.onnx",
-                                        "config/yolov4_anchors.txt"),
+                                     "config/yolov4_anchors.txt",
+                                     "config/coco_labels.txt"),
             "tests/data/faces.jpg"};
   } else {
     return {new DummyConcreteDetector(), "tests/data/1.jpg"};

@@ -39,8 +39,15 @@ target_link_libraries(va_server_core PUBLIC
 add_executable(grpc-va-server src/main.cc)
 target_link_libraries(grpc-va-server PUBLIC loguru va_server_core)
 
-add_executable(test-va-server tests/test_detector_interface.cc tests/test_img_det_service.cc)
-target_link_libraries(test-va-server PUBLIC gtest_main va_server_core absl::strings absl::str_format)
+add_executable(test-va-server
+        tests/test_detector_interface.cc
+        tests/test_img_det_service.cc
+        tests/test_onnx_yolov4_detector.cc)
+target_link_libraries(test-va-server PUBLIC
+        gtest_main
+        va_server_core
+        absl::strings
+        absl::str_format)
 target_include_directories(test-va-server PUBLIC src libs/googletest/googletest/include libs/abseil-cpp)
 add_test(NAME va_server_tests COMMAND test-va-server)
 
