@@ -1,5 +1,7 @@
 language: c++
 
+if: branch = main
+
 os: linux
 dist: bionic
 
