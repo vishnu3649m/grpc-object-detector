@@ -36,11 +36,24 @@ class OnnxYoloDetector : public DetectorInterface {
                    std::string _class_labels_path) :
       onnx_model_path{std::move(_onnx_model_path)},
       anchors_file_path{std::move(_anchors_file_path)},
-      class_labels_path{std::move(_class_labels_path)} { }
+      class_labels_path{std::move(_class_labels_path)} {
+  }
 
   ~OnnxYoloDetector() override {
     delete session;
   };
+
+  OnnxYoloDetector(const OnnxYoloDetector &other) = delete;
+
+  OnnxYoloDetector &operator=(const OnnxYoloDetector &other) {
+    if (this != &other) {
+      delete this->session;
+      onnx_model_path = other.onnx_model_path;
+      anchors_file_path = other.anchors_file_path;
+      class_labels_path = other.class_labels_path;
+    }
+    return *this;
+  }
 
   void initialize() override;
 
