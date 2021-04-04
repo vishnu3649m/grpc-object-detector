@@ -24,7 +24,9 @@ target_include_directories(va_server_core PUBLIC
         libs/loguru
         libs/CLI11/include
         libs/abseil-cpp
-        libs/onnxruntime/include)
+        libs/onnxruntime/include
+        libs/xtl/include
+        libs/xtensor/include)
 link_directories(va_server_core PUBLIC libs/onnxruntime/build/Linux/Release)
 target_link_libraries(va_server_core PUBLIC
         va_grpc_proto
