@@ -597,9 +597,10 @@ static std::vector<VA::Detection> nms(const std::vector<VA::Detection> &detectio
 
 std::vector<VA::Detection> VA::OnnxYoloDetector::detect(const cv::Mat &img) {
   std::vector<VA::Detection> dets;
+  int img_w = img.size().width;
+  int img_h = img.size().height;
 
-  LOG_F(INFO, "Image size: %d x %d x %d",
-        img.size().width, img.size().height, img.channels());
+  LOG_F(INFO, "Image size: %d x %d x %d", img_w, img_h, img.channels());
 
   std::vector<float> input_tensor_raw = preprocess_image(img, this->input_size);
 
@@ -630,8 +631,8 @@ std::vector<VA::Detection> VA::OnnxYoloDetector::detect(const cv::Mat &img) {
   LOG_F(INFO, "");
 
   auto img_preds = filter_predictions(parsed_preds,
-                                      float(img.size().height),
-                                      float(img.size().width),
+                                      float(img_h),
+                                      float(img_w),
                                       float(this->input_size),
                                       0.25f);
 
@@ -639,6 +640,13 @@ std::vector<VA::Detection> VA::OnnxYoloDetector::detect(const cv::Mat &img) {
 
   for (auto &preds : img_preds)
     dets = nms(preds, 0.213f);
+
+  std::for_each(dets.begin(), dets.end(), [img_w, img_h](VA::Detection &det){
+    det.box.left /= float(img_w);
+    det.box.top /= float(img_h);
+    det.box.width /= float(img_w);
+    det.box.height /= float(img_h);
+  });
 
   return dets;
 }
