@@ -14,10 +14,10 @@ addons:
 compiler: gcc
 
 before_install:
-  - bash tools/install_grpc.sh
+  - sudo bash tools/install_grpc.sh
 
 script:
-  - bash tools/build.sh
+  - sudo bash tools/build.sh
 
 after_success:
   - ./build/test-va-server
