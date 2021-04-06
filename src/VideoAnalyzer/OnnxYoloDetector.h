@@ -25,10 +25,9 @@ class OnnxYoloDetector : public DetectorInterface {
   bool init = false;
 
   Ort::Experimental::Session *session = nullptr;
-  std::vector<std::vector<int64_t>> anchors;
+  std::vector<int64_t> anchors;
   std::vector<std::string> class_labels;
-  int64_t input_w = 0;
-  int64_t input_h = 0;
+  int64_t input_size = 0;
 
  public:
   OnnxYoloDetector(std::string _onnx_model_path,

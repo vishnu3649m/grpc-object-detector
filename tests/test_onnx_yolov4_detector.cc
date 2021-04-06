@@ -41,3 +41,14 @@ TEST(OnnxYoloV4DetectorTest, DoesNotInitWhenProvidedInvalidClassLabelsFile) {
   detector.initialize();
   ASSERT_FALSE(detector.is_initialized());
 }
+
+TEST(OnnxYoloV4DetectorTest, CanDetectObjectsInImage) {
+  auto detector = VA::OnnxYoloDetector("config/yolov4.onnx",
+                                       "config/yolov4_anchors.txt",
+                                       "config/coco_labels.txt");
+  detector.initialize();
+  ASSERT_TRUE(detector.is_initialized());
+
+  auto detections = detector.detect(cv::imread("tests/data/kite.jpg"));
+  ASSERT_EQ(detections.size(), 14);
+}

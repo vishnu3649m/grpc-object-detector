@@ -18,6 +18,13 @@ struct RectTLWH {
       height{(float) box.height / (float) h} {
   }
 
+  RectTLWH(float xmin, float ymin, float xmax, float ymax) :
+      top{ymin},
+      left{xmin},
+      width{xmax - xmin},
+      height{ymax - ymin} {
+  }
+
   float top;
   float left;
   float width;
