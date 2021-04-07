@@ -7,13 +7,21 @@ addons:
   apt:
     update: true
     packages:
-      - cmake
+      - apt-transport-https
+      - ca-certificates
+      - gnupg
+      - software-properties-common
+      - wget
       - pkg-config
       - libopencv-dev
 
 compiler: gcc
 
 before_install:
+  - wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | sudo tee /etc/apt/trusted.gpg.d/kitware.gpg >/dev/null
+  - sudo apt-add-repository "deb https://apt.kitware.com/ubuntu/ $(cat /etc/os-release | grep UBUNTU_CODENAME | sed 's/.*=//') main"
+  - sudo apt-get update
+  - sudo apt-get install cmake=3.15.0-0kitware1 cmake-data=3.15.0-0kitware1
   - sudo bash tools/install_grpc.sh
 
 script:

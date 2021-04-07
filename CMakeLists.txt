@@ -1,15 +1,26 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.13)
 project(grpc-va-server)
 
 set(CMAKE_CXX_STANDARD 17)
 
+# ONNX Runtime build options
+set(onnxruntime_RUN_ONNX_TESTS OFF)
+set(onnxruntime_BUILD_WINML_TESTS OFF)
+set(onnxruntime_GENERATE_TEST_REPORTS OFF)
+set(onnxruntime_BUILD_SHARED_LIB ON)
+set(onnxruntime_PREFER_SYSTEM_LIB ON)
+set(onnxruntime_BUILD_UNIT_TESTS OFF)
+set(onnxruntime_USE_OPENMP ON)
+set(NSYNC_ENABLE_TESTS OFF)
+
+# check for and build dependencies
 find_package(PkgConfig REQUIRED)
 find_package(Threads REQUIRED)
-
+find_package(absl REQUIRED)
 pkg_check_modules(OPENCV REQUIRED opencv)
-
+add_subdirectory(libs/onnxruntime/cmake/external/nsync)
+add_subdirectory(libs/onnxruntime/cmake)
 add_subdirectory(libs/googletest)
-add_subdirectory(libs/abseil-cpp)
 add_subdirectory(protos/)
 add_library(loguru STATIC libs/loguru/loguru.cpp libs/loguru/loguru.hpp)
 
@@ -23,7 +34,6 @@ target_include_directories(va_server_core PUBLIC
         protos/build
         libs/loguru
         libs/CLI11/include
-        libs/abseil-cpp
         libs/onnxruntime/include
         libs/xtl/include
         libs/xtensor/include)
@@ -50,7 +60,7 @@ target_link_libraries(test-va-server PUBLIC
         va_server_core
         absl::strings
         absl::str_format)
-target_include_directories(test-va-server PUBLIC src libs/googletest/googletest/include libs/abseil-cpp)
+target_include_directories(test-va-server PUBLIC src libs/googletest/googletest/include)
 add_test(NAME va_server_tests COMMAND test-va-server)
 
 install(TARGETS grpc-va-server DESTINATION /usr/local/bin)

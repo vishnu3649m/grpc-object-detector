@@ -2,7 +2,7 @@
 
 # check if the necessary packages are installed
 CMDS="git pkg-config cmake"
-PKGS="build-essential autoconf libtool git pkg-config cmake"
+PKGS="build-essential autoconf libtool git pkg-config"
 missing=""
 
 for i in $CMDS; do
@@ -32,7 +32,7 @@ else
   git clone --recurse-submodules https://github.com/vishnu3649m/grpc.git /tmp/grpc
   mkdir /tmp/grpc/build
   cd /tmp/grpc/build
-  cmake -DgRPC_INSTALL=ON -DgRPC_BUILD_TESTS=OFF -DABSL_ENABLE_INSTALL=ON ..
+  cmake -DCMAKE_CXX_STANDARD=17 -DgRPC_INSTALL=ON -DgRPC_BUILD_TESTS=OFF -DABSL_ENABLE_INSTALL=ON ..
   make -j `nproc`
   make install
   cd ~

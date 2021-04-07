@@ -3,7 +3,7 @@
 
 # assumes gRPC and its dependencies are installed and findable by cmake
 
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.13)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -44,5 +44,4 @@ add_library(va_grpc_proto STATIC
         ${image_detection_proto_hdrs}
         ${image_detection_grpc_srcs}
         ${image_detection_grpc_hdrs})
-target_include_directories(va_grpc_proto PUBLIC ../libs/abseil-cpp)
 target_link_libraries(va_grpc_proto PUBLIC ${_REFLECTION} ${_GRPC_GRPCPP} ${_PROTOBUF_LIBPROTOBUF})
