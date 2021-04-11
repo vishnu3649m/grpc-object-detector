@@ -29,7 +29,7 @@ add_library(va_server_core STATIC
         src/VideoAnalyzer/DetectorInterface.h
         src/VideoAnalyzer/FaceEyesDetector.h src/VideoAnalyzer/FaceEyesDetector.cc
         src/VideoAnalyzer/ImageDetectionService.cc src/VideoAnalyzer/ImageDetectionService.h
-        src/VideoAnalyzer/OnnxYoloDetector.cc src/VideoAnalyzer/OnnxYoloDetector.h)
+        src/VideoAnalyzer/OnnxYoloDetector.cc src/VideoAnalyzer/OnnxYoloDetector.h src/VideoAnalyzer/onnx_yolo_detector_utils.cc)
 target_include_directories(va_server_core PUBLIC
         protos/build
         libs/loguru
