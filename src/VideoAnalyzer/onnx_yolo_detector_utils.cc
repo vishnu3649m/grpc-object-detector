@@ -140,14 +140,6 @@ std::vector<float> preprocess_image(const cv::Mat &img,
     }
   }
 
-  LOG_F(INFO, "Elements in input tensor: %zu", input_tensor_data.size());
-  int offset = (200 * 416 + 250) * 3;
-  LOG_F(INFO,
-        "Pixel value at [200][250]: %f, %f, %f",
-        input_tensor_data[offset],
-        input_tensor_data[offset + 1],
-        input_tensor_data[offset + 2]);
-
   return input_tensor_data;
 }
 
