@@ -146,7 +146,10 @@ std::vector<VA::Detection> VA::OnnxYoloDetector::detect(const cv::Mat &img) {
 }
 
 std::string VA::OnnxYoloDetector::class_id_to_label(int class_id) const {
-  return std::string("");
+  if (class_id < 0 || class_id >= class_labels.size())
+    return "";
+
+  return class_labels[class_id];
 }
 
 bool VA::OnnxYoloDetector::is_initialized() const {
