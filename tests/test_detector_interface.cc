@@ -71,8 +71,8 @@ pair<VA::DetectorInterface *,
      string> create_detector_under_test(const string &type) {
   if (type == "face_eyes_detector") {
     return {new VA::FaceEyesDetector(
-        "/usr/share/opencv/haarcascades/haarcascade_frontalface_alt.xml",
-        "/usr/share/opencv/haarcascades/haarcascade_eye_tree_eyeglasses.xml"),
+        "config/haarcascade_frontalface_alt.xml",
+        "config/haarcascade_eye_tree_eyeglasses.xml"),
             "tests/data/faces.jpg"};
   } else if (type == "yolov4") {
     return {new VA::OnnxYoloDetector("config/yolov4.onnx",
