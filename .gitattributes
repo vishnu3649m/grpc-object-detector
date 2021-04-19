@@ -1,0 +1,2 @@
+config/onnx_yolov4/yolov4.onnx filter=lfs diff=lfs merge=lfs -text
+tests/data/squeezenet1.0-7.onnx filter=lfs diff=lfs merge=lfs -text

@@ -45,7 +45,6 @@ dev.Dockerfile
 protos/build
 
 # DL model files
-*.onnx
 *.weights
 *.pth
 *.tar.gz

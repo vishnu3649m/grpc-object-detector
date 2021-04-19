@@ -54,8 +54,8 @@ grpc::Status ImageDetectionService::DetectImage(::grpc::ServerContext *context,
 
   cv::Size size = img.size();
   VA::FaceEyesDetector face_detector(
-      "config/haarcascade_frontalface_alt.xml",
-      "config/haarcascade_eye_tree_eyeglasses.xml");
+      "config/cascade_face_detector/haarcascade_frontalface_alt.xml",
+      "config/cascade_face_detector/haarcascade_eye_tree_eyeglasses.xml");
   face_detector.initialize();
   if (!face_detector.is_initialized())
     return grpc::Status(grpc::StatusCode::INTERNAL,
