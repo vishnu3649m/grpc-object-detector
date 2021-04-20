@@ -58,3 +58,8 @@ std::string VA::FaceEyesDetector::class_id_to_label(int class_id) const {
 bool VA::FaceEyesDetector::is_initialized() const {
   return init;
 }
+
+std::unordered_set<std::string> VA::FaceEyesDetector::available_objects_lookup() const {
+  return std::unordered_set<std::string>(class_label_map.begin(),
+                                         class_label_map.end());
+}

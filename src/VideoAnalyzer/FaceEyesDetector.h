@@ -34,6 +34,8 @@ class FaceEyesDetector : public DetectorInterface {
 
   std::vector<Detection> detect(const cv::Mat &img) override;
 
+  std::unordered_set<std::string> available_objects_lookup() const override;
+
   std::string class_id_to_label(int class_id) const override;
 
   bool is_initialized() const override;

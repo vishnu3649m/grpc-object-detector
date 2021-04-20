@@ -58,6 +58,10 @@ class DummyConcreteDetector : public VA::DetectorInterface {
     return detections;
   }
 
+  std::unordered_set<std::string> available_objects_lookup() const override {
+    return std::unordered_set<std::string> {absl::StrFormat("class_%d", class_id)};
+  }
+
   string class_id_to_label(int class_id_) const override {
     return absl::StrFormat("class_%d", class_id_);
   }
@@ -150,6 +154,16 @@ TEST_P(DetectorInterfaceTest,
 
     EXPECT_NE(label, "");
   }
+}
+
+TEST_P(DetectorInterfaceTest, ProvidesValidClassLabelLookup) {
+  ASSERT_TRUE(detector->is_initialized());
+  ASSERT_GT(detections.size(), 0);
+  auto lookup = detector->available_objects_lookup();
+
+  for (auto &det : detections)
+    ASSERT_NE(lookup.find(detector->class_id_to_label(det.class_id)),
+              lookup.end());
 }
 
 INSTANTIATE_TEST_SUITE_P(FactoryCreatedDetector,

@@ -7,6 +7,7 @@
 
 #include <opencv2/opencv.hpp>
 #include <vector>
+#include <unordered_set>
 
 namespace VA {
 
@@ -42,6 +43,8 @@ class DetectorInterface {
   virtual void initialize() = 0;
 
   virtual std::vector<Detection> detect(const cv::Mat &img) = 0;
+
+  virtual std::unordered_set<std::string> available_objects_lookup() const = 0;
 
   virtual std::string class_id_to_label(int class_id) const = 0;
 
