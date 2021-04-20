@@ -1,9 +1,9 @@
 /**
- * \brief Yolo Detector implemented using the ONNX Runtime
+ * \brief YoloV4 Detector implemented using the ONNX Runtime
  */
 
-#ifndef GRPC_VA_SERVER_SRC_VIDEOANALYZER_ONNXYOLODETECTOR_H_
-#define GRPC_VA_SERVER_SRC_VIDEOANALYZER_ONNXYOLODETECTOR_H_
+#ifndef GRPC_VA_SERVER_SRC_VIDEOANALYZER_ONNXYOLOV4DETECTOR_H_
+#define GRPC_VA_SERVER_SRC_VIDEOANALYZER_ONNXYOLOV4DETECTOR_H_
 
 #include <onnxruntime/core/session/experimental_onnxruntime_cxx_api.h>
 #include <xtensor/xarray.hpp>
@@ -65,7 +65,7 @@ bool read_labels(const std::string &filepath,
                  std::vector<std::string> &cls_labels);
 
 /**
- * Preprocess an image to according to the YOLO model's input requirements.
+ * Preprocess an image to according to the YOLOV4 model's input requirements.
  *
  * @param img           Image to preprocess
  * @param target_size   Model's input resolution
@@ -77,11 +77,11 @@ std::vector<float> preprocess_image(const cv::Mat &img,
 
 /**
  * Gets all predictions (bounding boxes, objectness probabilities and class
- * probabilities) from all 3 YOLO output layers.
+ * probabilities) from all 3 YOLOV4 output layers.
  *
  * @param outputs       Outputs from ONNX session inference
- * @param anchors       Anchors for this YOLO model
- * @param input_size    Input resolution of this YOLO model
+ * @param anchors       Anchors for this YOLOV4 model
+ * @param input_size    Input resolution of this YOLOV4 model
  * @return              A tensor of shape n_batch x (total grid * anchors boxes) x (5 + n_classes)
  */
 xt::xarray<float> get_all_predictions(const std::vector<Ort::Value> &outputs,
@@ -127,7 +127,7 @@ namespace VA {
  * * Text file containing the anchor dimensions used when training the model.
  * * Text file containing class labels.
  */
-class OnnxYoloDetector : public DetectorInterface {
+class OnnxYoloV4Detector : public DetectorInterface {
   std::string onnx_model_path;
   std::string anchors_file_path;
   std::string class_labels_path;
@@ -139,21 +139,21 @@ class OnnxYoloDetector : public DetectorInterface {
   int64_t input_size = 0;
 
  public:
-  OnnxYoloDetector(std::string _onnx_model_path,
-                   std::string _anchors_file_path,
-                   std::string _class_labels_path) :
+  OnnxYoloV4Detector(std::string _onnx_model_path,
+                     std::string _anchors_file_path,
+                     std::string _class_labels_path) :
       onnx_model_path{std::move(_onnx_model_path)},
       anchors_file_path{std::move(_anchors_file_path)},
       class_labels_path{std::move(_class_labels_path)} {
   }
 
-  ~OnnxYoloDetector() override {
+  ~OnnxYoloV4Detector() override {
     delete session;
   };
 
-  OnnxYoloDetector(const OnnxYoloDetector &other) = delete;
+  OnnxYoloV4Detector(const OnnxYoloV4Detector &other) = delete;
 
-  OnnxYoloDetector &operator=(const OnnxYoloDetector &other) {
+  OnnxYoloV4Detector &operator=(const OnnxYoloV4Detector &other) {
     if (this != &other) {
       delete this->session;
       onnx_model_path = other.onnx_model_path;
@@ -176,4 +176,4 @@ class OnnxYoloDetector : public DetectorInterface {
 
 }
 
-#endif //GRPC_VA_SERVER_SRC_VIDEOANALYZER_ONNXYOLODETECTOR_H_
+#endif //GRPC_VA_SERVER_SRC_VIDEOANALYZER_ONNXYOLOV4DETECTOR_H_

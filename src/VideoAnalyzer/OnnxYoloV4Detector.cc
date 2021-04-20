@@ -2,10 +2,10 @@
 
 #include <loguru.hpp>
 
-#include "OnnxYoloDetector.h"
+#include "OnnxYoloV4Detector.h"
 
 
-void VA::OnnxYoloDetector::initialize() {
+void VA::OnnxYoloV4Detector::initialize() {
   Ort::Env env(ORT_LOGGING_LEVEL_WARNING, "yolov4");
   Ort::SessionOptions options;
   session = new Ort::Experimental::Session(env, onnx_model_path, options);
@@ -89,7 +89,7 @@ void VA::OnnxYoloDetector::initialize() {
    init = true;
 }
 
-std::vector<VA::Detection> VA::OnnxYoloDetector::detect(const cv::Mat &img) {
+std::vector<VA::Detection> VA::OnnxYoloV4Detector::detect(const cv::Mat &img) {
   std::vector<VA::Detection> dets;
   int img_w = img.size().width;
   int img_h = img.size().height;
@@ -145,18 +145,18 @@ std::vector<VA::Detection> VA::OnnxYoloDetector::detect(const cv::Mat &img) {
   return dets;
 }
 
-std::string VA::OnnxYoloDetector::class_id_to_label(int class_id) const {
+std::string VA::OnnxYoloV4Detector::class_id_to_label(int class_id) const {
   if (class_id < 0 || class_id >= class_labels.size())
     return "";
 
   return class_labels[class_id];
 }
 
-bool VA::OnnxYoloDetector::is_initialized() const {
+bool VA::OnnxYoloV4Detector::is_initialized() const {
   return init;
 }
 
-std::unordered_set<std::string> VA::OnnxYoloDetector::available_objects_lookup() const {
+std::unordered_set<std::string> VA::OnnxYoloV4Detector::available_objects_lookup() const {
   return std::unordered_set<std::string>(class_labels.begin(),
                                          class_labels.end());
 }

@@ -12,7 +12,7 @@
 #include <xtensor/xmasked_view.hpp>
 #include <xtensor/xsort.hpp>
 
-#include "OnnxYoloDetector.h"
+#include "OnnxYoloV4Detector.h"
 
 template<class A>
 static inline std::string print_shape(const A &t) {
@@ -150,14 +150,14 @@ std::vector<float> preprocess_image(const cv::Mat &img,
  * anchors) & scales them to the original input resolution. Then it combines
  * all predictions boxes from the 2-D grid into a single axis.
  *
- * Output tensor from the YOLO model is expected to be of shape:
+ * Output tensor from the YOLOv4 model is expected to be of shape:
  *      n_batch x grid_size x grid_size x n_anchors x (5 + n_classes)
  * After all predicted boxes are scaled and combined, the tensor shape will be:
  *      n_batch x (grid_size * grid_size * n_anchors) x (5 + n_classes)
  *
  * @note  The output tensor passed to this function will be modified in place.
  *
- * @param tensor    YOLO output layer
+ * @param tensor    YOLOv4 output layer
  * @param anchors   Anchors used when training this layer
  * @param stride    Input size / grid size
  * @param xyscale   xyscale specified during model training
