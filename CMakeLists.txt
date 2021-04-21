@@ -3,23 +3,28 @@ project(grpc-va-server)
 
 set(CMAKE_CXX_STANDARD 17)
 
-# ONNX Runtime build options
-set(onnxruntime_RUN_ONNX_TESTS OFF)
-set(onnxruntime_BUILD_WINML_TESTS OFF)
-set(onnxruntime_GENERATE_TEST_REPORTS OFF)
-set(onnxruntime_BUILD_SHARED_LIB ON)
-set(onnxruntime_PREFER_SYSTEM_LIB ON)
-set(onnxruntime_BUILD_UNIT_TESTS OFF)
-set(onnxruntime_USE_OPENMP ON)
-set(NSYNC_ENABLE_TESTS OFF)
-
 # check for and build dependencies
+find_library(ONNXRUNTIME_LIB NAMES onnxruntime)
+if (ONNXRUNTIME_LIB)
+    message(STATUS "Found libonnxruntime")
+else()
+    # For building ONNX Runtime from submodule if not found
+    set(onnxruntime_RUN_ONNX_TESTS OFF)
+    set(onnxruntime_BUILD_WINML_TESTS OFF)
+    set(onnxruntime_GENERATE_TEST_REPORTS OFF)
+    set(onnxruntime_BUILD_SHARED_LIB ON)
+    set(onnxruntime_PREFER_SYSTEM_LIB ON)
+    set(onnxruntime_BUILD_UNIT_TESTS OFF)
+    set(onnxruntime_USE_OPENMP ON)
+    set(NSYNC_ENABLE_TESTS OFF)
+
+    add_subdirectory(libs/onnxruntime/cmake/external/nsync)
+    add_subdirectory(libs/onnxruntime/cmake)
+endif()
 find_package(PkgConfig REQUIRED)
 find_package(Threads REQUIRED)
 find_package(absl REQUIRED)
 pkg_check_modules(OPENCV REQUIRED opencv)
-add_subdirectory(libs/onnxruntime/cmake/external/nsync)
-add_subdirectory(libs/onnxruntime/cmake)
 add_subdirectory(libs/googletest)
 add_subdirectory(protos/)
 add_library(loguru STATIC libs/loguru/loguru.cpp libs/loguru/loguru.hpp)
@@ -38,7 +43,6 @@ target_include_directories(va_server_core PUBLIC
         libs/onnxruntime/include
         libs/xtl/include
         libs/xtensor/include)
-link_directories(va_server_core PUBLIC libs/onnxruntime/build/Linux/Release)
 target_link_libraries(va_server_core PUBLIC
         va_grpc_proto
         loguru
