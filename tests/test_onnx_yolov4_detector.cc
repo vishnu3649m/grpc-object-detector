@@ -1,5 +1,7 @@
 #include <gtest/gtest.h>
 
+#include <utility>
+
 #include "VideoAnalyzer/OnnxYoloV4Detector.h"
 
 using namespace std;
@@ -73,25 +75,68 @@ TEST(OnnxYoloV4DetectorTest, PreprocessesImageCorrectly) {
   }
 }
 
-TEST(OnnxYoloV4DetectorTest, CanDetectObjectsInImage) {
-  auto detector = VA::OnnxYoloV4Detector("config/onnx_yolov4/yolov4.onnx",
-                                         "config/onnx_yolov4/yolov4_anchors.txt",
-                                         "config/onnx_yolov4/coco_labels.txt");
+struct ImageTestCase {
+  string filename;
+  unordered_map<string, int> expected_detections;
+
+  ImageTestCase(string &&_filename,
+                initializer_list<pair<string, int>> expected_list) {
+    filename = move(_filename);
+    for (auto &expected : expected_list)
+      expected_detections.insert(expected);
+  }
+};
+
+class OnnxYoloV4ObjectDetectionTest :
+    public testing::TestWithParam<ImageTestCase> {
+
+};
+
+TEST_P(OnnxYoloV4ObjectDetectionTest, CanDetectObjectsInImage) {
+  auto detector = VA::OnnxYoloV4Detector(
+      "config/onnx_yolov4/yolov4.onnx",
+      "config/onnx_yolov4/yolov4_anchors.txt",
+      "config/onnx_yolov4/coco_labels.txt"
+  );
   detector.initialize();
   ASSERT_TRUE(detector.is_initialized());
 
-  auto detections = detector.detect(cv::imread("tests/data/kite.jpg"));
-  // hash table keyed by class_id to store counts of each object class
-  unordered_map<int, int> object_counts;
-  for (const auto &det : detections)
-    if (object_counts.find(det.class_id) != object_counts.end())
-      object_counts[det.class_id]++;
-    else
-      object_counts[det.class_id] = 1;
+  auto image_test_case = GetParam();
 
-  ASSERT_EQ(detections.size(), 14);
-  ASSERT_NE(object_counts.find(0), object_counts.end());
-  EXPECT_EQ(object_counts[0], 7);
-  ASSERT_NE(object_counts.find(33), object_counts.end());
-  EXPECT_EQ(object_counts[33], 7);
+  auto detections = detector.detect(cv::imread(image_test_case.filename));
+
+  // hash table keyed by class label to store detection counts of each class
+  unordered_map<string, int> object_counts;
+  for (const auto &det : detections) {
+    string label = detector.class_id_to_label(det.class_id);
+    if (object_counts.find(label) != object_counts.end())
+      object_counts[label]++;
+    else
+      object_counts[label] = 1;
+  }
+
+  EXPECT_EQ(object_counts, image_test_case.expected_detections);
 }
+
+INSTANTIATE_TEST_SUITE_P(YoloV4ExpectedDetections,
+                         OnnxYoloV4ObjectDetectionTest,
+                         testing::Values(
+                             ImageTestCase("tests/data/kite.jpg",
+                                           {{"person", 7}, {"kite", 7}}),
+                             ImageTestCase("tests/data/dog.jpg",
+                                           {{"dog", 1}, {"bicycle", 1}, {"truck", 1}}),
+                             ImageTestCase("tests/data/eagle.jpg",
+                                           {{"bird", 1}}),
+                             ImageTestCase("tests/data/giraffe.jpg",
+                                           {{"zebra", 1}, {"giraffe", 1}}),
+                             ImageTestCase("tests/data/horses.jpg",
+                                           {{"horse", 5}}),
+                             ImageTestCase("tests/data/house.jpg",
+                                           {{"person", 1}, {"refrigerator", 1}, {"vase", 1}, {"chair", 3}, {"potted plant", 1}, {"tvmonitor", 2}}),
+                             ImageTestCase("tests/data/person.jpg",
+                                           {{"person", 1}, {"horse", 1}, {"dog", 1}}),
+                             ImageTestCase("tests/data/vegetables.jpg",
+                                           {{"broccoli", 2}, {"carrot", 5}, {"dining table", 1}}),
+                             ImageTestCase("tests/data/motorbike.jpg",
+                                           {{"person", 1}, {"motorbike", 1}})
+                         ));

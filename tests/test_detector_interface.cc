@@ -84,7 +84,7 @@ pair<VA::DetectorInterface *,
                                        "config/onnx_yolov4/coco_labels.txt"),
             "tests/data/faces.jpg"};
   } else {
-    return {new DummyConcreteDetector(), "tests/data/1.jpg"};
+    return {new DummyConcreteDetector(), "tests/data/motorbike.jpg"};
   }
 }
 
