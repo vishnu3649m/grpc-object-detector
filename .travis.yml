@@ -14,6 +14,7 @@ addons:
       - wget
       - pkg-config
       - libopencv-dev
+      - lcov
 
 compiler: gcc
 
@@ -26,6 +27,11 @@ before_install:
 
 script:
   - sudo bash tools/build.sh
+  - ./build/test-va-server
 
 after_success:
-  - ./build/test-va-server
+  - gcov -b -m src/VideoAnalyzer -o build/CMakeFiles/test-va-server.dir/src/VideoAnalyzer/*
+  - lcov -c -d . -o coverage.info
+  - lcov -e coverage.info "*VideoAnalyzer*" -o coverage.info
+  - lcov -l coverage.info
+  - bash <(curl -s https://codecov.io/bash) -f coverage.info || echo "Codecov did not collect coverage reports"

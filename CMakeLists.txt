@@ -3,6 +3,8 @@ project(grpc-va-server)
 
 set(CMAKE_CXX_STANDARD 17)
 
+set(CMAKE_CXX_FLAGS "-fsanitize=address -fno-omit-frame-pointer -O0 -g -coverage")
+
 # check for and build dependencies
 find_library(ONNXRUNTIME_LIB NAMES onnxruntime)
 if (ONNXRUNTIME_LIB)
@@ -57,15 +59,35 @@ add_executable(grpc-va-server src/main.cc)
 target_link_libraries(grpc-va-server PUBLIC loguru va_server_core)
 
 add_executable(test-va-server
+        src/VideoAnalyzer/DetectorInterface.h
+        src/VideoAnalyzer/FaceEyesDetector.h src/VideoAnalyzer/FaceEyesDetector.cc
+        src/VideoAnalyzer/ImageDetectionService.cc src/VideoAnalyzer/ImageDetectionService.h
+        src/VideoAnalyzer/OnnxYoloV4Detector.cc src/VideoAnalyzer/OnnxYoloV4Detector.h
+        src/VideoAnalyzer/onnx_yolov4_detector_utils.cc
         tests/test_detector_interface.cc
         tests/test_img_det_service.cc
         tests/test_onnx_yolov4_detector.cc)
 target_link_libraries(test-va-server PUBLIC
+        va_grpc_proto
+        loguru
+        pthread
+        dl
+        ${OPENCV_LIBRARIES}
+        onnxruntime
+        gtest
         gtest_main
-        va_server_core
         absl::strings
         absl::str_format)
-target_include_directories(test-va-server PUBLIC src libs/googletest/googletest/include)
+target_include_directories(test-va-server PUBLIC
+        src
+        protos/build
+        libs/loguru
+        libs/onnxruntime/include
+        libs/xtl/include
+        libs/xtensor/include
+        libs/googletest/googletest/include)
+target_compile_options(test-va-server PUBLIC -O0 -g --coverage)
+target_link_options(test-va-server PUBLIC --coverage)
 add_test(NAME va_server_tests COMMAND test-va-server)
 
 install(TARGETS grpc-va-server DESTINATION /usr/local/bin)
