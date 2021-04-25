@@ -3,8 +3,6 @@ project(grpc-va-server)
 
 set(CMAKE_CXX_STANDARD 17)
 
-set(CMAKE_CXX_FLAGS "-fsanitize=address -fno-omit-frame-pointer -O0 -g -coverage")
-
 # check for and build dependencies
 find_library(ONNXRUNTIME_LIB NAMES onnxruntime)
 if (ONNXRUNTIME_LIB)
