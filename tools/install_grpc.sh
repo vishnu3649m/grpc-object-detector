@@ -29,9 +29,11 @@ fi
 if pkg-config protobuf && pkg-config grpc && pkg-config gpr && pkg-config grpc++; then
   echo 'gRPC and C++ plugin are already installed and registered with pkg-config'
 else
-  git clone --recurse-submodules https://github.com/vishnu3649m/grpc.git /tmp/grpc
-  mkdir /tmp/grpc/build
-  cd /tmp/grpc/build
+  git clone --recurse-submodules https://github.com/grpc/grpc.git /tmp/grpc
+  cd /tmp/grpc
+  git checkout tags/v1.37.0
+  mkdir build
+  cd build
   cmake -DCMAKE_CXX_STANDARD=17 -DgRPC_INSTALL=ON -DgRPC_BUILD_TESTS=OFF -DABSL_ENABLE_INSTALL=ON ..
   make -j `nproc`
   make install

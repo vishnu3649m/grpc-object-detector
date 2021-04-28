@@ -11,8 +11,6 @@ jobs:
       - run:
           name: Build & install
           command: bash tools/build.sh
-      - run: export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
-      - run: ldconfig
       - run:
           name: Test
           command: ./build/test-va-server
