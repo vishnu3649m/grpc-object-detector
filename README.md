@@ -1,7 +1,8 @@
 gRPC Video Analyzer
 -------------------
-[![Build Status](https://travis-ci.com/vishnu3649m/grpc-video-analyzer.svg?branch=main)](https://travis-ci.com/vishnu3649m/grpc-video-analyzer)
-![Generic badge](https://img.shields.io/badge/os-linux-lightgrey)
+[![ci](https://img.shields.io/circleci/build/gh/vishnu3649m/grpc-video-analyzer?logo=circleci&style=flat-square)](https://app.circleci.com/pipelines/github/vishnu3649m/grpc-video-analyzer)
+[![codecov](https://img.shields.io/codecov/c/gh/vishnu3649m/grpc-video-analyzer?style=flat-square&logo=codecov)](https://app.codecov.io/gh/vishnu3649m/grpc-video-analyzer)
+[![LinuxOS](https://img.shields.io/badge/os-linux-lightgrey?style=flat-square)]()
 
 A video analysis and image detection service via gRPC.
 
