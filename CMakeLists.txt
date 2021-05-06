@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.13)
-project(grpc-va-server)
+project(grpc-obj-det)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -29,22 +29,22 @@ add_subdirectory(libs/googletest)
 add_subdirectory(protos/)
 add_library(loguru STATIC libs/loguru/loguru.cpp libs/loguru/loguru.hpp)
 
-# Core VA server lib
-add_library(va_server_core STATIC
+# Core obj detection + server lib
+add_library(objdet-server-core STATIC
         src/VideoAnalyzer/DetectorInterface.h
         src/VideoAnalyzer/FaceEyesDetector.h src/VideoAnalyzer/FaceEyesDetector.cc
         src/VideoAnalyzer/ImageDetectionService.cc src/VideoAnalyzer/ImageDetectionService.h
         src/VideoAnalyzer/OnnxYoloV4Detector.cc src/VideoAnalyzer/OnnxYoloV4Detector.h
         src/VideoAnalyzer/onnx_yolov4_detector_utils.cc)
-target_include_directories(va_server_core PUBLIC
+target_include_directories(objdet-server-core PUBLIC
         protos/build
         libs/loguru
         libs/CLI11/include
         libs/onnxruntime/include
         libs/xtl/include
         libs/xtensor/include)
-target_link_libraries(va_server_core PUBLIC
-        va_grpc_proto
+target_link_libraries(objdet-server-core PUBLIC
+        objdet-grpc-proto
         loguru
         pthread
         dl
@@ -53,10 +53,10 @@ target_link_libraries(va_server_core PUBLIC
         absl::str_format
         onnxruntime)
 
-add_executable(grpc-va-server src/main.cc)
-target_link_libraries(grpc-va-server PUBLIC loguru va_server_core)
+add_executable(grpc-objdet-server src/main.cc)
+target_link_libraries(grpc-objdet-server PUBLIC loguru objdet-server-core)
 
-add_executable(test-va-server
+add_executable(test-objdet-server
         src/VideoAnalyzer/DetectorInterface.h
         src/VideoAnalyzer/FaceEyesDetector.h src/VideoAnalyzer/FaceEyesDetector.cc
         src/VideoAnalyzer/ImageDetectionService.cc src/VideoAnalyzer/ImageDetectionService.h
@@ -65,8 +65,8 @@ add_executable(test-va-server
         tests/test_detector_interface.cc
         tests/test_img_det_service.cc
         tests/test_onnx_yolov4_detector.cc)
-target_link_libraries(test-va-server PUBLIC
-        va_grpc_proto
+target_link_libraries(test-objdet-server PUBLIC
+        objdet-grpc-proto
         loguru
         pthread
         dl
@@ -76,7 +76,7 @@ target_link_libraries(test-va-server PUBLIC
         gtest_main
         absl::strings
         absl::str_format)
-target_include_directories(test-va-server PUBLIC
+target_include_directories(test-objdet-server PUBLIC
         src
         protos/build
         libs/loguru
@@ -84,8 +84,8 @@ target_include_directories(test-va-server PUBLIC
         libs/xtl/include
         libs/xtensor/include
         libs/googletest/googletest/include)
-target_compile_options(test-va-server PUBLIC -O0 -g --coverage)
-target_link_options(test-va-server PUBLIC --coverage)
-add_test(NAME va_server_tests COMMAND test-va-server)
+target_compile_options(test-objdet-server PUBLIC -O0 -g --coverage)
+target_link_options(test-objdet-server PUBLIC --coverage)
+add_test(NAME objdet_server_tests COMMAND test-objdet-server)
 
-install(TARGETS grpc-va-server DESTINATION /usr/local/bin)
+install(TARGETS grpc-objdet-server DESTINATION /usr/local/bin)

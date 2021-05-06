@@ -13,7 +13,7 @@ jobs:
           command: bash tools/build.sh
       - run:
           name: Test
-          command: ./build/test-va-server
+          command: ./build/test-objdet-server
       - run:
           name: Code Coverage
           command: |

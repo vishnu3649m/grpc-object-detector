@@ -39,9 +39,9 @@ add_custom_command(
         "image_detection.proto"
         DEPENDS "image_detection.proto")
 
-add_library(va_grpc_proto STATIC
+add_library(objdet-grpc-proto STATIC
         ${image_detection_proto_srcs}
         ${image_detection_proto_hdrs}
         ${image_detection_grpc_srcs}
         ${image_detection_grpc_hdrs})
-target_link_libraries(va_grpc_proto PUBLIC ${_REFLECTION} ${_GRPC_GRPCPP} ${_PROTOBUF_LIBPROTOBUF})
+target_link_libraries(objdet-grpc-proto PUBLIC ${_REFLECTION} ${_GRPC_GRPCPP} ${_PROTOBUF_LIBPROTOBUF})
