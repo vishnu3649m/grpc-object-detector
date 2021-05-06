@@ -3,7 +3,7 @@
 
 syntax = "proto3";
 
-package VA.Grpc;
+package ObjDet.Grpc;
 
 message DetectableObjectsRequest {
   // [Optional] Case-insensitive object names that users would like to be detected.
@@ -13,7 +13,7 @@ message DetectableObjectsRequest {
 }
 
 message DetectableObjectsResponse {
-  // Objects that this VA server is able to detect in images.
+  // Objects that this server is able to detect in images.
   repeated string available_object = 1;
 }
 

@@ -8,8 +8,8 @@
 #include "ImageDetectionService.h"
 
 grpc::Status ImageDetectionService::GetDetectableObjects(::grpc::ServerContext *context,
-                                                         const ::VA::Grpc::DetectableObjectsRequest *request,
-                                                         ::VA::Grpc::DetectableObjectsResponse *response) {
+                                                         const ::ObjDet::Grpc::DetectableObjectsRequest *request,
+                                                         ::ObjDet::Grpc::DetectableObjectsResponse *response) {
   std::unordered_set<std::string> valid_objects{"face", "eye"};
 
   if (request->object_of_interest_size()) {
@@ -29,8 +29,8 @@ grpc::Status ImageDetectionService::GetDetectableObjects(::grpc::ServerContext *
 }
 
 grpc::Status ImageDetectionService::DetectImage(::grpc::ServerContext *context,
-                                                const ::VA::Grpc::ImageDetectionRequest *request,
-                                                ::VA::Grpc::ImageDetectionResponse *response) {
+                                                const ::ObjDet::Grpc::ImageDetectionRequest *request,
+                                                ::ObjDet::Grpc::ImageDetectionResponse *response) {
   std::vector<char> img_bytes(request->image().begin(), request->image().end());
   cv::Mat img = cv::imdecode(img_bytes, cv::IMREAD_COLOR);
   std::unordered_set<std::string> valid_objects = {"face", "eye"};
