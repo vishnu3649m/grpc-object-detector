@@ -11,7 +11,7 @@
 
 #include "DetectorInterface.h"
 
-namespace VA {
+namespace ObjDet {
 
 class FaceEyesDetector : public DetectorInterface {
   cv::CascadeClassifier face_cascade;

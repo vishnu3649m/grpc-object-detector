@@ -9,7 +9,7 @@
 #include <gtest/gtest.h>
 #include <grpcpp/server.h>
 
-#include "VideoAnalyzer/ImageDetectionService.h"
+#include "grpc_obj_det/ImageDetectionService.h"
 
 class ImageDetectionGetDetectableObjectsTest : public ::testing::Test {
  protected:

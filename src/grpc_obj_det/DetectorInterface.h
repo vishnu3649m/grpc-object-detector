@@ -9,7 +9,7 @@
 #include <vector>
 #include <unordered_set>
 
-namespace VA {
+namespace ObjDet {
 
 struct RectTLWH {
   RectTLWH(const cv::Rect &box, int w, int h) :

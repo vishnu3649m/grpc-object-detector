@@ -31,11 +31,11 @@ add_library(loguru STATIC libs/loguru/loguru.cpp libs/loguru/loguru.hpp)
 
 # Core obj detection + server lib
 add_library(objdet-server-core STATIC
-        src/VideoAnalyzer/DetectorInterface.h
-        src/VideoAnalyzer/FaceEyesDetector.h src/VideoAnalyzer/FaceEyesDetector.cc
-        src/VideoAnalyzer/ImageDetectionService.cc src/VideoAnalyzer/ImageDetectionService.h
-        src/VideoAnalyzer/OnnxYoloV4Detector.cc src/VideoAnalyzer/OnnxYoloV4Detector.h
-        src/VideoAnalyzer/onnx_yolov4_detector_utils.cc)
+        src/grpc_obj_det/DetectorInterface.h
+        src/grpc_obj_det/FaceEyesDetector.h src/grpc_obj_det/FaceEyesDetector.cc
+        src/grpc_obj_det/ImageDetectionService.cc src/grpc_obj_det/ImageDetectionService.h
+        src/grpc_obj_det/OnnxYoloV4Detector.cc src/grpc_obj_det/OnnxYoloV4Detector.h
+        src/grpc_obj_det/onnx_yolov4_detector_utils.cc)
 target_include_directories(objdet-server-core PUBLIC
         protos/build
         libs/loguru
@@ -57,11 +57,11 @@ add_executable(grpc-objdet-server src/main.cc)
 target_link_libraries(grpc-objdet-server PUBLIC loguru objdet-server-core)
 
 add_executable(test-objdet-server
-        src/VideoAnalyzer/DetectorInterface.h
-        src/VideoAnalyzer/FaceEyesDetector.h src/VideoAnalyzer/FaceEyesDetector.cc
-        src/VideoAnalyzer/ImageDetectionService.cc src/VideoAnalyzer/ImageDetectionService.h
-        src/VideoAnalyzer/OnnxYoloV4Detector.cc src/VideoAnalyzer/OnnxYoloV4Detector.h
-        src/VideoAnalyzer/onnx_yolov4_detector_utils.cc
+        src/grpc_obj_det/DetectorInterface.h
+        src/grpc_obj_det/FaceEyesDetector.h src/grpc_obj_det/FaceEyesDetector.cc
+        src/grpc_obj_det/ImageDetectionService.cc src/grpc_obj_det/ImageDetectionService.h
+        src/grpc_obj_det/OnnxYoloV4Detector.cc src/grpc_obj_det/OnnxYoloV4Detector.h
+        src/grpc_obj_det/onnx_yolov4_detector_utils.cc
         tests/test_detector_interface.cc
         tests/test_img_det_service.cc
         tests/test_onnx_yolov4_detector.cc)

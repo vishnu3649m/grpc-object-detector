@@ -4,18 +4,18 @@
 
 #include "FaceEyesDetector.h"
 
-void VA::FaceEyesDetector::initialize() {
+void ObjDet::FaceEyesDetector::initialize() {
   class_label_map = {"face", "eye"};
   face_cascade.load(cv::String(face_config_file));
   eyes_cascade.load(cv::String(eyes_config_file));
   init = true;
 }
 
-std::vector<VA::Detection> VA::FaceEyesDetector::detect(const cv::Mat &img) {
+std::vector<ObjDet::Detection> ObjDet::FaceEyesDetector::detect(const cv::Mat &img) {
   cv::Size size = img.size();
   std::vector<cv::Rect> face_boxes;
   cv::Mat greyscale_img;
-  std::vector<VA::Detection> dets;
+  std::vector<ObjDet::Detection> dets;
 
   cv::cvtColor(img, greyscale_img, cv::COLOR_BGR2GRAY);
   cv::equalizeHist(greyscale_img, greyscale_img);
@@ -49,17 +49,17 @@ std::vector<VA::Detection> VA::FaceEyesDetector::detect(const cv::Mat &img) {
   return dets;
 }
 
-std::string VA::FaceEyesDetector::class_id_to_label(int class_id) const {
+std::string ObjDet::FaceEyesDetector::class_id_to_label(int class_id) const {
   if (class_id < 0 || class_id > 1)
     return "";
   return class_label_map[class_id];
 }
 
-bool VA::FaceEyesDetector::is_initialized() const {
+bool ObjDet::FaceEyesDetector::is_initialized() const {
   return init;
 }
 
-std::unordered_set<std::string> VA::FaceEyesDetector::available_objects_lookup() const {
+std::unordered_set<std::string> ObjDet::FaceEyesDetector::available_objects_lookup() const {
   return std::unordered_set<std::string>(class_label_map.begin(),
                                          class_label_map.end());
 }

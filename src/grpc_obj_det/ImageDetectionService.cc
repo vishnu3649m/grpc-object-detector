@@ -53,7 +53,7 @@ grpc::Status ImageDetectionService::DetectImage(::grpc::ServerContext *context,
                         "Refer to GetDetectableObjects RPC for supported objects.");
 
   cv::Size size = img.size();
-  VA::FaceEyesDetector face_detector(
+  ObjDet::FaceEyesDetector face_detector(
       "config/cascade_face_detector/haarcascade_frontalface_alt.xml",
       "config/cascade_face_detector/haarcascade_eye_tree_eyeglasses.xml");
   face_detector.initialize();
