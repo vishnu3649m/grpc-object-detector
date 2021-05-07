@@ -1,6 +1,3 @@
-//
-// Created by Vishnu on 3/3/21.
-//
 
 #include <opencv2/opencv.hpp>
 

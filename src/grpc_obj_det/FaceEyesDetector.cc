@@ -1,6 +1,3 @@
-//
-// Created by Vishnu on 18/2/21.
-//
 
 #include "FaceEyesDetector.h"
 

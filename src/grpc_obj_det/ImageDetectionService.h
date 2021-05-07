@@ -1,9 +1,9 @@
-//
-// Created by Vishnu on 3/3/21.
-//
+/**
+ * Concrete defs for C++ implementation of the specified gRPC services.
+ */
 
-#ifndef GRPC_VA_SERVER_IMAGEDETECTIONSERVICE_H
-#define GRPC_VA_SERVER_IMAGEDETECTIONSERVICE_H
+#ifndef GRPC_OBJ_DET_IMAGEDETECTIONSERVICE_H
+#define GRPC_OBJ_DET_IMAGEDETECTIONSERVICE_H
 
 #include <grpc/grpc.h>
 
@@ -21,4 +21,4 @@ class ImageDetectionService final : public ::ObjDet::Grpc::ImageDetection::Servi
 };
 
 
-#endif //GRPC_VA_SERVER_IMAGEDETECTIONSERVICE_H
+#endif //GRPC_OBJ_DET_IMAGEDETECTIONSERVICE_H

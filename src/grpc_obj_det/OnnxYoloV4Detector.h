@@ -1,9 +1,9 @@
 /**
- * \brief YoloV4 Detector implemented using the ONNX Runtime
+ * YoloV4 Detector implemented using the ONNX Runtime
  */
 
-#ifndef GRPC_VA_SERVER_SRC_VIDEOANALYZER_ONNXYOLOV4DETECTOR_H_
-#define GRPC_VA_SERVER_SRC_VIDEOANALYZER_ONNXYOLOV4DETECTOR_H_
+#ifndef GRPC_OBJ_DET_ONNXYOLOV4DETECTOR_H_
+#define GRPC_OBJ_DET_ONNXYOLOV4DETECTOR_H_
 
 #include <onnxruntime/core/session/experimental_onnxruntime_cxx_api.h>
 #include <xtensor/xarray.hpp>
@@ -176,4 +176,4 @@ class OnnxYoloV4Detector : public DetectorInterface {
 
 }
 
-#endif //GRPC_VA_SERVER_SRC_VIDEOANALYZER_ONNXYOLOV4DETECTOR_H_
+#endif //GRPC_OBJ_DET_ONNXYOLOV4DETECTOR_H_

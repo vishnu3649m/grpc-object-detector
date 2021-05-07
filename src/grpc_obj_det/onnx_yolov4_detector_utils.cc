@@ -1,6 +1,5 @@
 /**
- * Utilities and helper function, such as pre- and post-processing, for
- * determining final detections in an image.
+ * Utilities and helper functions for YOLOv4 model pre- and post-processing.
  */
 
 #include <loguru.hpp>
