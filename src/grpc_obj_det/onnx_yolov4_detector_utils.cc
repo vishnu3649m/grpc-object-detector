@@ -1,6 +1,5 @@
 /**
- * Utilities and helper function, such as pre- and post-processing, for
- * determining final detections in an image.
+ * Utilities and helper functions for YOLOv4 model pre- and post-processing.
  */
 
 #include <loguru.hpp>
@@ -257,17 +256,17 @@ xt::xarray<float> get_all_predictions(const std::vector<Ort::Value> &outputs,
   return xt::eval(predictions);
 }
 
-static inline VA::Detection pred_to_detection(float xmin, float ymin,
-                                              float xmax, float ymax,
-                                              float score, int cls_id) {
-  return VA::Detection{cls_id, VA::RectTLWH(xmin, ymin, xmax, ymax), score};
+static inline ObjDet::Detection pred_to_detection(float xmin, float ymin,
+                                                  float xmax, float ymax,
+                                                  float score, int cls_id) {
+  return ObjDet::Detection{cls_id, ObjDet::RectTLWH(xmin, ymin, xmax, ymax), score};
 }
 
-std::vector<std::vector<VA::Detection>> filter_predictions(xt::xarray<float> &preds,
-                                                           float img_h,
-                                                           float img_w,
-                                                           float input_size,
-                                                           float threshold) {
+std::vector<std::vector<ObjDet::Detection>> filter_predictions(xt::xarray<float> &preds,
+                                                               float img_h,
+                                                               float img_w,
+                                                               float input_size,
+                                                               float threshold) {
   size_t n_classes = preds.shape()[2] - 5;
   auto pred_xy = xt::view(preds, xt::all(), xt::all(), xt::range(0, 2));
   auto pred_wh = xt::view(preds, xt::all(), xt::all(), xt::range(2, 4));
@@ -329,15 +328,15 @@ std::vector<std::vector<VA::Detection>> filter_predictions(xt::xarray<float> &pr
   auto pred_score = xt::eval(pred_conf * xt::amax(pred_prob, 2));
   auto score_mask = pred_score > threshold;
 
-  /** Convert predictions in tensor to VA::Detection objects. */
+  /** Convert predictions in tensor to ObjDet::Detection objects. */
   auto mask = scale_mask && score_mask;
-  std::vector<std::vector<VA::Detection>> filtered_preds;
+  std::vector<std::vector<ObjDet::Detection>> filtered_preds;
   int64_t n_batch = preds.shape()[0];
   for (int64_t i = 0; i < n_batch; ++i) {
     auto selected = xt::flatten_indices(xt::argwhere(xt::view(mask,
                                                               i,
                                                               xt::all())));
-    std::vector<VA::Detection> dets;
+    std::vector<ObjDet::Detection> dets;
     for (const auto &p : selected) {
       dets.push_back(pred_to_detection(preds.at(i, p, 0),
                                        preds.at(i, p, 1),
@@ -368,8 +367,8 @@ std::vector<std::vector<VA::Detection>> filter_predictions(xt::xarray<float> &pr
   return filtered_preds;
 }
 
-static inline float calculate_iou(const VA::RectTLWH &box1,
-                                  const VA::RectTLWH &box2) {
+static inline float calculate_iou(const ObjDet::RectTLWH &box1,
+                                  const ObjDet::RectTLWH &box2) {
   float box1_area = box1.width * box1.height;
   float box2_area = box2.width * box2.height;
 
@@ -385,8 +384,8 @@ static inline float calculate_iou(const VA::RectTLWH &box1,
   return inter_area / union_area;
 }
 
-static inline float iou_with_existing(const VA::Detection &candidate,
-                                      const std::vector<VA::Detection> &existing) {
+static inline float iou_with_existing(const ObjDet::Detection &candidate,
+                                      const std::vector<ObjDet::Detection> &existing) {
   float highest_iou = 0.0f;
   for (const auto &e : existing)
     if (float iou = calculate_iou(e.box, candidate.box); iou > highest_iou)
@@ -394,28 +393,28 @@ static inline float iou_with_existing(const VA::Detection &candidate,
   return highest_iou;
 }
 
-std::vector<VA::Detection> nms(const std::vector<VA::Detection> &detections,
-                               float iou_threshold) {
-  std::vector<VA::Detection> post_nms_detections;
-  std::unordered_map<int, std::vector<VA::Detection>> classes_in_img;
+std::vector<ObjDet::Detection> nms(const std::vector<ObjDet::Detection> &detections,
+                                   float iou_threshold) {
+  std::vector<ObjDet::Detection> post_nms_detections;
+  std::unordered_map<int, std::vector<ObjDet::Detection>> classes_in_img;
 
   for (auto &det : detections)
     if (classes_in_img.find(det.class_id) != classes_in_img.end())
       classes_in_img[det.class_id].push_back(det);
     else
-      classes_in_img[det.class_id] = std::vector<VA::Detection>{det};
+      classes_in_img[det.class_id] = std::vector<ObjDet::Detection>{det};
 
-  auto comparator = [](const VA::Detection &a, const VA::Detection &b) {
+  auto comparator = [](const ObjDet::Detection &a, const ObjDet::Detection &b) {
     return a.confidence < b.confidence;
   };
 
   for (auto &c : classes_in_img) {
     auto &dets = c.second;
     std::make_heap(dets.begin(), dets.end(), comparator);
-    std::vector<VA::Detection> best_dets;
+    std::vector<ObjDet::Detection> best_dets;
 
     while (!dets.empty()) {
-      VA::Detection candidate = dets[0];
+      ObjDet::Detection candidate = dets[0];
       std::pop_heap(dets.begin(), dets.end(), comparator);
       dets.pop_back();
       if (iou_with_existing(candidate, best_dets) < iou_threshold)

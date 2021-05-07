@@ -9,14 +9,14 @@
 #include <gtest/gtest.h>
 #include <grpcpp/server.h>
 
-#include "VideoAnalyzer/ImageDetectionService.h"
+#include "grpc_obj_det/ImageDetectionService.h"
 
 class ImageDetectionGetDetectableObjectsTest : public ::testing::Test {
  protected:
   ImageDetectionService service;
   grpc::ServerContext context;
-  VA::Grpc::DetectableObjectsRequest request;
-  VA::Grpc::DetectableObjectsResponse response;
+  ObjDet::Grpc::DetectableObjectsRequest request;
+  ObjDet::Grpc::DetectableObjectsResponse response;
 
   grpc::Status req_() {
     return service.GetDetectableObjects(&context, &request, &response);
@@ -27,8 +27,8 @@ class ImageDetectionDetectImageTest : public ::testing::Test {
  protected:
   ImageDetectionService service;
   grpc::ServerContext context;
-  VA::Grpc::ImageDetectionRequest request;
-  VA::Grpc::ImageDetectionResponse response;
+  ObjDet::Grpc::ImageDetectionRequest request;
+  ObjDet::Grpc::ImageDetectionResponse response;
 
   /* Directly populates the ImageDetectionRequest's image field. */
   void read_image(const std::string &filepath) {

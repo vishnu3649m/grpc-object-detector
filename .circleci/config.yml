@@ -13,12 +13,12 @@ jobs:
           command: bash tools/build.sh
       - run:
           name: Test
-          command: ./build/test-va-server
+          command: ./build/test-objdet-server
       - run:
           name: Code Coverage
           command: |
-            gcov -b -m src/VideoAnalyzer -o build/CMakeFiles/test-va-server.dir/src/VideoAnalyzer/*
+            gcov -b -m src/grpc_obj_det -o build/CMakeFiles/test-objdet-server.dir/src/grpc_obj_det/*
             lcov -c -d . -o coverage.info
-            lcov -e coverage.info "*VideoAnalyzer*" -o coverage.info
+            lcov -e coverage.info "*grpc_obj_det*" -o coverage.info
             lcov -l coverage.info
             bash <(curl -s https://codecov.io/bash) -f coverage.info || echo "Codecov did not collect coverage reports"

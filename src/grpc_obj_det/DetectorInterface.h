@@ -1,15 +1,16 @@
-//
-// Created by Vishnu on 18/2/21.
-//
+/**
+ * Core interfaces for developers to implement object detectors compatible with
+ * the gRPC server.
+ */
 
-#ifndef GRPC_VA_SERVER_DETECTORINTERFACE_H
-#define GRPC_VA_SERVER_DETECTORINTERFACE_H
+#ifndef GRPC_OBJ_DET_DETECTORINTERFACE_H
+#define GRPC_OBJ_DET_DETECTORINTERFACE_H
 
 #include <opencv2/opencv.hpp>
 #include <vector>
 #include <unordered_set>
 
-namespace VA {
+namespace ObjDet {
 
 struct RectTLWH {
   RectTLWH(const cv::Rect &box, int w, int h) :
@@ -55,4 +56,4 @@ class DetectorInterface {
 
 }
 
-#endif //GRPC_VA_SERVER_DETECTORINTERFACE_H
+#endif //GRPC_OBJ_DET_DETECTORINTERFACE_H

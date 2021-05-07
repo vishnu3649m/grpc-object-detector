@@ -6,16 +6,16 @@
 #include <grpcpp/server.h>
 #include <grpcpp/server_builder.h>
 
-#include "VideoAnalyzer/ImageDetectionService.h"
+#include "grpc_obj_det/ImageDetectionService.h"
 
 using namespace std;
 
-#define VIDEO_ANALYZER_VERSION_MAJOR 0
-#define VIDEO_ANALYZER_VERSION_MINOR 1
-#define VIDEO_ANALYZER_VERSION_PATCH 0
+#define GRPC_OBJ_DET_VERSION_MAJOR 0
+#define GRPC_OBJ_DET_VERSION_MINOR 1
+#define GRPC_OBJ_DET_VERSION_PATCH 0
 
 int main(int argc, char **argv) {
-  CLI::App app{"gRPC Video Analyzer"};
+  CLI::App app{"gRPC Object Detector"};
 
   bool version = false;
   string action;
@@ -29,10 +29,10 @@ int main(int argc, char **argv) {
   CLI11_PARSE(app, argc, argv);
 
   if (version) {
-    string version_msg = absl::StrFormat("gRPC Video Analyzer %d.%d.%d",
-                                         VIDEO_ANALYZER_VERSION_MAJOR,
-                                         VIDEO_ANALYZER_VERSION_MINOR,
-                                         VIDEO_ANALYZER_VERSION_PATCH);
+    string version_msg = absl::StrFormat("gRPC Object Detector %d.%d.%d",
+                                         GRPC_OBJ_DET_VERSION_MAJOR,
+                                         GRPC_OBJ_DET_VERSION_MINOR,
+                                         GRPC_OBJ_DET_VERSION_PATCH);
     cout << version_msg << endl;
     return 0;
   }
@@ -47,7 +47,7 @@ int main(int argc, char **argv) {
   builder.AddListeningPort(address, grpc::InsecureServerCredentials());
   builder.RegisterService(&service);
   std::unique_ptr<grpc::Server> server(builder.BuildAndStart());
-  LOG_F(INFO, "gRPC Video Analyzer Server listening on %s", address.c_str());
+  LOG_F(INFO, "gRPC Object Detection Server listening on %s", address.c_str());
   server->Wait();
 
   return 0;

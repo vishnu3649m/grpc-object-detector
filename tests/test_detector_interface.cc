@@ -7,13 +7,13 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/core/utility.hpp>
 
-#include "VideoAnalyzer/DetectorInterface.h"
-#include "VideoAnalyzer/FaceEyesDetector.h"
-#include "VideoAnalyzer/OnnxYoloV4Detector.h"
+#include "grpc_obj_det/DetectorInterface.h"
+#include "grpc_obj_det/FaceEyesDetector.h"
+#include "grpc_obj_det/OnnxYoloV4Detector.h"
 
 using namespace std;
 
-class DummyConcreteDetector : public VA::DetectorInterface {
+class DummyConcreteDetector : public ObjDet::DetectorInterface {
  public:
   DummyConcreteDetector() = default;
 
@@ -31,13 +31,13 @@ class DummyConcreteDetector : public VA::DetectorInterface {
     return init;
   }
 
-  vector<VA::Detection> detect(const cv::Mat &img) override {
+  vector<ObjDet::Detection> detect(const cv::Mat &img) override {
     cv::Size size = img.size();
     cv::Mat grayscale_img;
     cv::Mat binary_img;
     vector<vector<cv::Point>> contours;
     vector<cv::Vec4i> hierarchy;
-    vector<VA::Detection> detections;
+    vector<ObjDet::Detection> detections;
 
     cv::cvtColor(img, grayscale_img, cv::COLOR_BGR2GRAY);
     cv::threshold(grayscale_img, binary_img, 127, 255, cv::THRESH_BINARY);
@@ -50,8 +50,8 @@ class DummyConcreteDetector : public VA::DetectorInterface {
     for (auto &contour_ : contours) {
       cv::Rect box = cv::boundingRect(contour_);
       detections.push_back(
-          VA::Detection{class_id,
-              VA::RectTLWH(box, size.width, size.height),
+          ObjDet::Detection{class_id,
+              ObjDet::RectTLWH(box, size.width, size.height),
               0.2});
     }
 
@@ -71,17 +71,17 @@ class DummyConcreteDetector : public VA::DetectorInterface {
   bool init = false;
 };
 
-pair<VA::DetectorInterface *,
+pair<ObjDet::DetectorInterface *,
      string> create_detector_under_test(const string &type) {
   if (type == "face_eyes_detector") {
-    return {new VA::FaceEyesDetector(
+    return {new ObjDet::FaceEyesDetector(
         "config/cascade_face_detector/haarcascade_frontalface_alt.xml",
         "config/cascade_face_detector/haarcascade_eye_tree_eyeglasses.xml"),
             "tests/data/faces.jpg"};
   } else if (type == "yolov4") {
-    return {new VA::OnnxYoloV4Detector("config/onnx_yolov4/yolov4.onnx",
-                                       "config/onnx_yolov4/yolov4_anchors.txt",
-                                       "config/onnx_yolov4/coco_labels.txt"),
+    return {new ObjDet::OnnxYoloV4Detector("config/onnx_yolov4/yolov4.onnx",
+                                           "config/onnx_yolov4/yolov4_anchors.txt",
+                                           "config/onnx_yolov4/coco_labels.txt"),
             "tests/data/faces.jpg"};
   } else {
     return {new DummyConcreteDetector(), "tests/data/motorbike.jpg"};
@@ -102,8 +102,8 @@ class DetectorInterfaceTest : public testing::TestWithParam<string> {
   }
 
  protected:
-  VA::DetectorInterface *detector;
-  vector<VA::Detection> detections;
+  ObjDet::DetectorInterface *detector;
+  vector<ObjDet::Detection> detections;
 };
 
 TEST_P(DetectorInterfaceTest, CanInitializeSuccessfully) {

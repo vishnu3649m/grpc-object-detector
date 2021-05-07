@@ -5,7 +5,7 @@
 #include "OnnxYoloV4Detector.h"
 
 
-void VA::OnnxYoloV4Detector::initialize() {
+void ObjDet::OnnxYoloV4Detector::initialize() {
   Ort::Env env(ORT_LOGGING_LEVEL_WARNING, "yolov4");
   Ort::SessionOptions options;
   session = new Ort::Experimental::Session(env, onnx_model_path, options);
@@ -89,8 +89,8 @@ void VA::OnnxYoloV4Detector::initialize() {
    init = true;
 }
 
-std::vector<VA::Detection> VA::OnnxYoloV4Detector::detect(const cv::Mat &img) {
-  std::vector<VA::Detection> dets;
+std::vector<ObjDet::Detection> ObjDet::OnnxYoloV4Detector::detect(const cv::Mat &img) {
+  std::vector<ObjDet::Detection> dets;
   int img_w = img.size().width;
   int img_h = img.size().height;
 
@@ -135,7 +135,7 @@ std::vector<VA::Detection> VA::OnnxYoloV4Detector::detect(const cv::Mat &img) {
   for (auto &preds : img_preds)
     dets = nms(preds, 0.213f);
 
-  std::for_each(dets.begin(), dets.end(), [img_w, img_h](VA::Detection &det){
+  std::for_each(dets.begin(), dets.end(), [img_w, img_h](ObjDet::Detection &det){
     det.box.left /= float(img_w);
     det.box.top /= float(img_h);
     det.box.width /= float(img_w);
@@ -145,18 +145,18 @@ std::vector<VA::Detection> VA::OnnxYoloV4Detector::detect(const cv::Mat &img) {
   return dets;
 }
 
-std::string VA::OnnxYoloV4Detector::class_id_to_label(int class_id) const {
+std::string ObjDet::OnnxYoloV4Detector::class_id_to_label(int class_id) const {
   if (class_id < 0 || class_id >= class_labels.size())
     return "";
 
   return class_labels[class_id];
 }
 
-bool VA::OnnxYoloV4Detector::is_initialized() const {
+bool ObjDet::OnnxYoloV4Detector::is_initialized() const {
   return init;
 }
 
-std::unordered_set<std::string> VA::OnnxYoloV4Detector::available_objects_lookup() const {
+std::unordered_set<std::string> ObjDet::OnnxYoloV4Detector::available_objects_lookup() const {
   return std::unordered_set<std::string>(class_labels.begin(),
                                          class_labels.end());
 }

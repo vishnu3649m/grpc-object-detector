@@ -1,9 +1,12 @@
-//
-// Created by Vishnu on 18/2/21.
-//
+/**
+ * A detector that identifies faces and eyes in images.
+ *
+ * Based on an OpenCV example for its cascade classifier. A simple demo of the
+ * DetectorInterface being used for various kinds of detection algorithms.
+ */
 
-#ifndef GRPC_VA_SERVER_FACEEYESDETECTOR_H
-#define GRPC_VA_SERVER_FACEEYESDETECTOR_H
+#ifndef GRPC_OBJ_DET_FACEEYESDETECTOR_H
+#define GRPC_OBJ_DET_FACEEYESDETECTOR_H
 
 #include <string>
 #include <utility>
@@ -11,7 +14,7 @@
 
 #include "DetectorInterface.h"
 
-namespace VA {
+namespace ObjDet {
 
 class FaceEyesDetector : public DetectorInterface {
   cv::CascadeClassifier face_cascade;
@@ -43,4 +46,4 @@ class FaceEyesDetector : public DetectorInterface {
 
 }
 
-#endif //GRPC_VA_SERVER_FACEEYESDETECTOR_H
+#endif //GRPC_OBJ_DET_FACEEYESDETECTOR_H

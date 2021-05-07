@@ -1,9 +1,9 @@
 /**
- * \brief YoloV4 Detector implemented using the ONNX Runtime
+ * YoloV4 Detector implemented using the ONNX Runtime
  */
 
-#ifndef GRPC_VA_SERVER_SRC_VIDEOANALYZER_ONNXYOLOV4DETECTOR_H_
-#define GRPC_VA_SERVER_SRC_VIDEOANALYZER_ONNXYOLOV4DETECTOR_H_
+#ifndef GRPC_OBJ_DET_ONNXYOLOV4DETECTOR_H_
+#define GRPC_OBJ_DET_ONNXYOLOV4DETECTOR_H_
 
 #include <onnxruntime/core/session/experimental_onnxruntime_cxx_api.h>
 #include <xtensor/xarray.hpp>
@@ -101,11 +101,11 @@ xt::xarray<float> get_all_predictions(const std::vector<Ort::Value> &outputs,
  * @return              A vector of size n_batch containing a vector of filtered
  *                      detections for each image in the batch.
  */
-std::vector<std::vector<VA::Detection>> filter_predictions(xt::xarray<float> &preds,
-                                                           float img_h,
-                                                           float img_w,
-                                                           float input_size,
-                                                           float threshold);
+std::vector<std::vector<ObjDet::Detection>> filter_predictions(xt::xarray<float> &preds,
+                                                               float img_h,
+                                                               float img_w,
+                                                               float input_size,
+                                                               float threshold);
 
 /**
  * Performs non-maximal suppression on detections to remove overlapping boxes
@@ -115,10 +115,10 @@ std::vector<std::vector<VA::Detection>> filter_predictions(xt::xarray<float> &pr
  * @param iou_threshold Intersection threshold above which to discard boxes
  * @return              Vector of detections after NMS
  */
-std::vector<VA::Detection> nms(const std::vector<VA::Detection> &detections,
-                               float iou_threshold);
+std::vector<ObjDet::Detection> nms(const std::vector<ObjDet::Detection> &detections,
+                                   float iou_threshold);
 
-namespace VA {
+namespace ObjDet {
 
 /**
  * A YOLOv4 detector served using the ONNX runtime. To initialize and run this
@@ -176,4 +176,4 @@ class OnnxYoloV4Detector : public DetectorInterface {
 
 }
 
-#endif //GRPC_VA_SERVER_SRC_VIDEOANALYZER_ONNXYOLOV4DETECTOR_H_
+#endif //GRPC_OBJ_DET_ONNXYOLOV4DETECTOR_H_
