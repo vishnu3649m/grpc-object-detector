@@ -4,10 +4,16 @@
 #include "FaceEyesDetector.h"
 #include "ImageDetectionService.h"
 
+
+ImageDetectionService::ImageDetectionService(const std::string &detector_type) {
+  detector = ObjDet::DetectorFactory::get_detector(detector_type);
+  detector->initialize();
+}
+
 grpc::Status ImageDetectionService::GetDetectableObjects(::grpc::ServerContext *context,
                                                          const ::ObjDet::Grpc::DetectableObjectsRequest *request,
                                                          ::ObjDet::Grpc::DetectableObjectsResponse *response) {
-  std::unordered_set<std::string> valid_objects{"face", "eye"};
+  std::unordered_set<std::string> valid_objects = detector->available_objects_lookup();
 
   if (request->object_of_interest_size()) {
     for (auto obj : request->object_of_interest()) {
@@ -30,7 +36,7 @@ grpc::Status ImageDetectionService::DetectImage(::grpc::ServerContext *context,
                                                 ::ObjDet::Grpc::ImageDetectionResponse *response) {
   std::vector<char> img_bytes(request->image().begin(), request->image().end());
   cv::Mat img = cv::imdecode(img_bytes, cv::IMREAD_COLOR);
-  std::unordered_set<std::string> valid_objects = {"face", "eye"};
+  std::unordered_set<std::string> valid_objects = detector->available_objects_lookup();
   std::unordered_set<std::string> requested_objects;
 
   if (img.empty())
@@ -50,18 +56,11 @@ grpc::Status ImageDetectionService::DetectImage(::grpc::ServerContext *context,
                         "Refer to GetDetectableObjects RPC for supported objects.");
 
   cv::Size size = img.size();
-  ObjDet::FaceEyesDetector face_detector(
-      "config/cascade_face_detector/haarcascade_frontalface_alt.xml",
-      "config/cascade_face_detector/haarcascade_eye_tree_eyeglasses.xml");
-  face_detector.initialize();
-  if (!face_detector.is_initialized())
-    return grpc::Status(grpc::StatusCode::INTERNAL,
-                        "Server could not initialize necessary resources to process this request.");
 
-  auto detections = face_detector.detect(img);
+  auto detections = detector->detect(img);
   for (const auto &det : detections) {
     auto *detection_msg = response->add_detections();
-    detection_msg->set_object_name(face_detector.class_id_to_label(det.class_id));
+    detection_msg->set_object_name(detector->class_id_to_label(det.class_id));
     detection_msg->set_confidence(det.confidence);
     detection_msg->set_top_left_x(int(det.box.left * size.width));
     detection_msg->set_top_left_y(int(det.box.top * size.height));

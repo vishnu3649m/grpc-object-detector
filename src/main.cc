@@ -41,7 +41,7 @@ int main(int argc, char **argv) {
 
   LOG_F(INFO, "Starting gRPC server...");
   std::string address = "127.0.0.1:8081";
-  ImageDetectionService service;
+  ImageDetectionService service{"cascade_face_detector"};
 
   grpc::ServerBuilder builder;
   builder.AddListeningPort(address, grpc::InsecureServerCredentials());
