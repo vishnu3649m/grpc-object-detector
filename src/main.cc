@@ -18,13 +18,12 @@ int main(int argc, char **argv) {
   CLI::App app{"gRPC Object Detector"};
 
   bool version = false;
-  string action;
+  string detector_type;
 
   app.add_flag("--version,-V", version, "Prints version info and exits");
-  app.add_option("action",
-                 action,
-                 "Server action to perform")
-                    ->check(CLI::IsMember({"start"}));
+  app.add_option("--detector-type,-d",
+                 detector_type,
+                 "The type of detector to serve")->required();
 
   CLI11_PARSE(app, argc, argv);
 
@@ -41,14 +40,21 @@ int main(int argc, char **argv) {
 
   LOG_F(INFO, "Starting gRPC server...");
   std::string address = "127.0.0.1:8081";
-  ImageDetectionService service;
 
-  grpc::ServerBuilder builder;
-  builder.AddListeningPort(address, grpc::InsecureServerCredentials());
-  builder.RegisterService(&service);
-  std::unique_ptr<grpc::Server> server(builder.BuildAndStart());
-  LOG_F(INFO, "gRPC Object Detection Server listening on %s", address.c_str());
-  server->Wait();
+  try {
+    ObjDet::Grpc::ImageDetectionService service{detector_type};
+
+    grpc::ServerBuilder builder;
+    builder.AddListeningPort(address, grpc::InsecureServerCredentials());
+    builder.RegisterService(&service);
+    std::unique_ptr<grpc::Server> server(builder.BuildAndStart());
+    LOG_F(INFO, "gRPC Object Detection Server listening on %s", address.c_str());
+    server->Wait();
+  } catch (ObjDet::Grpc::ImageDetectionServiceInitError &error) {
+    LOG_F(ERROR, "ImageDetection Service could not start because: %s. Exiting!",
+          error.what());
+    return 1;
+  }
 
   return 0;
 }

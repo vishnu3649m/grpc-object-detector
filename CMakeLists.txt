@@ -35,7 +35,7 @@ add_library(objdet-server-core STATIC
         src/grpc_obj_det/FaceEyesDetector.h src/grpc_obj_det/FaceEyesDetector.cc
         src/grpc_obj_det/ImageDetectionService.cc src/grpc_obj_det/ImageDetectionService.h
         src/grpc_obj_det/OnnxYoloV4Detector.cc src/grpc_obj_det/OnnxYoloV4Detector.h
-        src/grpc_obj_det/onnx_yolov4_detector_utils.cc)
+        src/grpc_obj_det/onnx_yolov4_detector_utils.cc src/grpc_obj_det/DetectorFactory.h)
 target_include_directories(objdet-server-core PUBLIC
         protos/build
         libs/loguru
