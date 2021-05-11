@@ -10,6 +10,15 @@
 #include "image_detection.grpc.pb.h"
 #include "DetectorFactory.h"
 
+namespace ObjDet::Grpc {
+
+class ImageDetectionServiceInitError : public std::runtime_error {
+ public:
+  explicit ImageDetectionServiceInitError(const std::string& arg)
+      : std::runtime_error(arg) {
+  }
+};
+
 class ImageDetectionService final : public ::ObjDet::Grpc::ImageDetection::Service {
  public:
   explicit ImageDetectionService(const std::string &detector_type);
@@ -25,6 +34,8 @@ class ImageDetectionService final : public ::ObjDet::Grpc::ImageDetection::Servi
  private:
   std::unique_ptr<ObjDet::DetectorInterface> detector;
 };
+
+}
 
 
 #endif //GRPC_OBJ_DET_IMAGEDETECTIONSERVICE_H

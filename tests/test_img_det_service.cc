@@ -11,9 +11,14 @@
 
 #include "grpc_obj_det/ImageDetectionService.h"
 
+TEST(ImageDetectionServiceTest, RaisesExceptionWhenUnknownDetectorIsSpecified) {
+  ASSERT_THROW(ObjDet::Grpc::ImageDetectionService("some_unknown_detector"),
+               ObjDet::Grpc::ImageDetectionServiceInitError);
+}
+
 class ImageDetectionGetDetectableObjectsTest : public testing::TestWithParam<std::string> {
  protected:
-  ImageDetectionService service{"cascade_face_detector"};
+  ObjDet::Grpc::ImageDetectionService service{"cascade_face_detector"};
   grpc::ServerContext context;
   ObjDet::Grpc::DetectableObjectsRequest request;
   ObjDet::Grpc::DetectableObjectsResponse response;
@@ -25,7 +30,7 @@ class ImageDetectionGetDetectableObjectsTest : public testing::TestWithParam<std
 
 class ImageDetectionDetectImageTest : public ::testing::Test {
  protected:
-  ImageDetectionService service{"cascade_face_detector"};
+  ObjDet::Grpc::ImageDetectionService service{"cascade_face_detector"};
   grpc::ServerContext context;
   ObjDet::Grpc::ImageDetectionRequest request;
   ObjDet::Grpc::ImageDetectionResponse response;
