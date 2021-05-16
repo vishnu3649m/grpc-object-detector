@@ -18,20 +18,8 @@ ObjDet::Grpc::ImageDetectionService::ImageDetectionService(const std::string &de
 grpc::Status ObjDet::Grpc::ImageDetectionService::GetDetectableObjects(::grpc::ServerContext *context,
                                                                        const ::ObjDet::Grpc::DetectableObjectsRequest *request,
                                                                        ::ObjDet::Grpc::DetectableObjectsResponse *response) {
-  std::unordered_set<std::string> valid_objects = detector->available_objects_lookup();
-
-  if (request->object_of_interest_size()) {
-    for (auto obj : request->object_of_interest()) {
-      std::transform(obj.begin(), obj.end(), obj.begin(), [](unsigned char c) {
-        return std::tolower(c);
-      });
-      if (valid_objects.count(obj))
-        response->add_available_object(obj);
-    }
-  } else {
-    for (const auto &obj : valid_objects)
-      response->add_available_object(obj);
-  }
+  for (const auto &obj : detector->available_objects_lookup())
+    response->add_available_object(obj);
 
   return grpc::Status::OK;
 }

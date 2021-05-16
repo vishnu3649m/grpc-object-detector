@@ -6,10 +6,12 @@ syntax = "proto3";
 package ObjDet.Grpc;
 
 message DetectableObjectsRequest {
-  // [Optional] Case-insensitive object names that users would like to be detected.
-  // Object names output by this server follow common labels found in computer vision
-  // datasets.
-  repeated string object_of_interest = 1;
+  /*
+    Unused.
+
+    A placeholder message for future use since gRPC APIs can't be called without
+    requests.
+   */
 }
 
 message DetectableObjectsResponse {
@@ -49,10 +51,7 @@ message ImageDetectionResponse {
 
 service ImageDetection {
   /**
-    Returns the list of objects supported by the server.
-
-    Users can send an optional list of objects to check if they are supported.
-    If sent, only supported objects within the request will be returned in the reponse.
+    Returns the list of objects detectable by object detection model(s) in the server.
    */
   rpc GetDetectableObjects(DetectableObjectsRequest) returns (DetectableObjectsResponse) {}
 
