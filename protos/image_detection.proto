@@ -20,10 +20,8 @@ message DetectableObjectsResponse {
 }
 
 message ImageDetectionRequest {
-  // Object(s) to detect; must be supported by this server. Case-insensitive.
-  repeated string object_to_detect = 1;
   // Image to analyze as bytes. Image size must be less than 2^32 bytes.
-  bytes image = 3;
+  bytes image = 1;
 }
 
 message Detection {
@@ -56,8 +54,7 @@ service ImageDetection {
   rpc GetDetectableObjects(DetectableObjectsRequest) returns (DetectableObjectsResponse) {}
 
   /**
-    Runs relevant detector(s) on the provided image to detect object(s)
-    requested by the user.
+    Runs object detector(s) on the provided image and returns detections.
    */
   rpc DetectImage(ImageDetectionRequest) returns (ImageDetectionResponse) {}
 }

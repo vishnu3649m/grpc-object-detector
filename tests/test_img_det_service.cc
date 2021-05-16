@@ -16,39 +16,6 @@ TEST(ImageDetectionServiceTest, RaisesExceptionWhenUnknownDetectorIsSpecified) {
                ObjDet::Grpc::ImageDetectionServiceInitError);
 }
 
-class ImageDetectionDetectImageTest : public ::testing::Test {
- protected:
-  ObjDet::Grpc::ImageDetectionService service{"cascade_face_detector"};
-  grpc::ServerContext context;
-  ObjDet::Grpc::ImageDetectionRequest request;
-  ObjDet::Grpc::ImageDetectionResponse response;
-
-  /* Directly populates the ImageDetectionRequest's image field. */
-  void read_image(const std::string &filepath) {
-    std::streampos img_size;
-    char *img_buffer;
-    std::ifstream img_file(filepath,
-                           std::ios::in | std::ios::binary | std::ios::ate);
-    if (img_file.is_open()) {
-      img_size = img_file.tellg();
-      img_buffer = new char[img_size];
-      img_file.seekg(0, std::ios::beg);
-      img_file.read(img_buffer, img_size);
-      img_file.close();
-      request.set_image(img_buffer, img_size);
-      std::cout << "Request populated with image " << filepath << " of size "
-                << img_size << std::endl;
-      delete[] img_buffer;
-    } else {
-      std::cout << "Could not open image file!\n";
-    }
-  }
-
-  grpc::Status req_() {
-    return service.DetectImage(&context, &request, &response);
-  }
-};
-
 TEST(ImageDetectionGetDetectableObjectsTest,
        ReturnsAllObjectsFromCascadeFaceDetector) {
   ObjDet::Grpc::ImageDetectionService service{"cascade_face_detector"};
@@ -170,24 +137,32 @@ TEST(ImageDetectionGetDetectableObjectsTest,
   ASSERT_EQ(returned_labels, expected_labels);
 }
 
-TEST_F(ImageDetectionDetectImageTest, ReturnsDetectionsForSupportedObjects) {
-  request.add_object_to_detect("face");
-  request.add_object_to_detect("eye");
-  read_image("tests/data/faces.jpg");
+TEST(ImageDetectionDetectImageTest, ReturnsDetections) {
+  ObjDet::Grpc::ImageDetectionService service{"cascade_face_detector"};
+  grpc::ServerContext context;
+  ObjDet::Grpc::ImageDetectionRequest request;
+  ObjDet::Grpc::ImageDetectionResponse response;
 
-  grpc::Status status = req_();
+  std::streampos img_size;
+  char *img_buffer;
+  std::ifstream img_file("tests/data/faces.jpg",
+  std::ios::in | std::ios::binary | std::ios::ate);
+  if (img_file.is_open()) {
+    img_size = img_file.tellg();
+    img_buffer = new char[img_size];
+    img_file.seekg(0, std::ios::beg);
+    img_file.read(img_buffer, img_size);
+    img_file.close();
+    request.set_image(img_buffer, img_size);
+    std::cout << "Request populated with image " << "tests/data/faces.jpg" << " of size "
+              << img_size << std::endl;
+    delete[] img_buffer;
+  } else {
+    std::cout << "Could not open image file!\n";
+  }
+
+  grpc::Status status = service.DetectImage(&context, &request, &response);
 
   ASSERT_TRUE(status.ok());
   EXPECT_GT(response.detections().size(), 0);
-}
-
-TEST_F(ImageDetectionDetectImageTest,
-       ReturnsInvalidArgumentForEmptyObjectsRequest) {
-  read_image("tests/data/faces.jpg");
-
-  grpc::Status status = req_();
-
-  ASSERT_FALSE(status.ok());
-  ASSERT_EQ(status.error_code(), grpc::StatusCode::INVALID_ARGUMENT);
-  EXPECT_EQ(response.detections().size(), 0);
 }
