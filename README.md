@@ -15,11 +15,11 @@ detector(s) on your images to detect count objects you want.
 Feel free to fork this repo and adapt this for your own object detection services.
 
 This server provides the following services:
-- Detection Service for Images
-    - `GetDetectableObjects`: Returns the list of objects detectable by the server
-    - `DetectImage`: Detects objects of interest in the provided image
+- Running object detection on images
+    - `GetDetectableObjects`: Returns the list of objects the server can detect
+    - `DetectImage`: Returns a list of detections for an image
 
-Refer to the [protos](protos) directory for exact description of all gRPC services.
+Refer to the [protos](protos) directory for more usage details of the gRPC services.
 
 ## Building gRPC Object Detector
 gRPC Object Detector is currently developed for 64-bit Linux only.
@@ -49,7 +49,25 @@ cmake -DCMAKE_BUILD_TYPE=Release ..
 make -j $(nproc) && make install
 ```
 
-#### Running
+#### Running the server
+
+> NOTE:</br>The object detectors need the files within the `config` folder to 
+> initialize. It is important to run the server from this directory so detectors
+> can find the config files upon startup.
+
 ```
-grpc-objdet-server start
+gRPC Object Detector
+Usage: grpc-objdet-server [OPTIONS]
+
+Options:
+  -h,--help                   Print this help message and exit
+  -V,--version                Prints version info and exits
+  -d,--detector-type TEXT REQUIRED
+                              The type of detector to serve
 ```
+
+For example, to serve a YOLOv4 model trained on the COCO dataset, run:
+```shell
+grpc-objdet-server -d onnx_yolov4_coco
+```
+
