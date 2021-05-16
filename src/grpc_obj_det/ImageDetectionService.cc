@@ -18,20 +18,8 @@ ObjDet::Grpc::ImageDetectionService::ImageDetectionService(const std::string &de
 grpc::Status ObjDet::Grpc::ImageDetectionService::GetDetectableObjects(::grpc::ServerContext *context,
                                                                        const ::ObjDet::Grpc::DetectableObjectsRequest *request,
                                                                        ::ObjDet::Grpc::DetectableObjectsResponse *response) {
-  std::unordered_set<std::string> valid_objects = detector->available_objects_lookup();
-
-  if (request->object_of_interest_size()) {
-    for (auto obj : request->object_of_interest()) {
-      std::transform(obj.begin(), obj.end(), obj.begin(), [](unsigned char c) {
-        return std::tolower(c);
-      });
-      if (valid_objects.count(obj))
-        response->add_available_object(obj);
-    }
-  } else {
-    for (const auto &obj : valid_objects)
-      response->add_available_object(obj);
-  }
+  for (const auto &obj : detector->available_objects_lookup())
+    response->add_available_object(obj);
 
   return grpc::Status::OK;
 }
@@ -41,24 +29,10 @@ grpc::Status ObjDet::Grpc::ImageDetectionService::DetectImage(::grpc::ServerCont
                                                               ::ObjDet::Grpc::ImageDetectionResponse *response) {
   std::vector<char> img_bytes(request->image().begin(), request->image().end());
   cv::Mat img = cv::imdecode(img_bytes, cv::IMREAD_COLOR);
-  std::unordered_set<std::string> valid_objects = detector->available_objects_lookup();
-  std::unordered_set<std::string> requested_objects;
 
   if (img.empty())
     return grpc::Status(grpc::StatusCode::INVALID_ARGUMENT,
                         "Valid image could not be parsed from the provided bytes.");
-
-  for (auto obj : request->object_to_detect()) {
-    std::transform(obj.begin(), obj.end(), obj.begin(), [](unsigned char c) {
-      return std::tolower(c);
-    });
-    if (valid_objects.count(obj))
-      requested_objects.insert(obj);
-  }
-  if (requested_objects.empty())
-    return grpc::Status(grpc::StatusCode::INVALID_ARGUMENT,
-                        "At least 1 object detectable by this server needs to be provided. "
-                        "Refer to GetDetectableObjects RPC for supported objects.");
 
   cv::Size size = img.size();
 

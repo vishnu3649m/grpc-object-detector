@@ -1,27 +1,50 @@
-// Defines messages and services for detecting objects in images.
+/**
+  Image detection service
+  -----------------------
+
+  This service allows users to use an object detection model to detect objects
+  within their images. The type of object detector can be configured upon server
+  startup.
+ */
 
 
 syntax = "proto3";
 
 package ObjDet.Grpc;
 
+service ImageDetection {
+  /**
+    Returns the list of objects detectable by object detection model(s) in the server.
+   */
+  rpc GetDetectableObjects(DetectableObjectsRequest) returns (DetectableObjectsResponse) {}
+
+  /**
+    Runs object detector(s) on the provided image and returns detections.
+   */
+  rpc DetectImage(ImageDetectionRequest) returns (ImageDetectionResponse) {}
+}
+
 message DetectableObjectsRequest {
-  // [Optional] Case-insensitive object names that users would like to be detected.
-  // Object names output by this server follow common labels found in computer vision
-  // datasets.
-  repeated string object_of_interest = 1;
+  /*
+    Unused.
+
+    A placeholder message for future use since gRPC APIs can't be called without
+    requests.
+   */
 }
 
 message DetectableObjectsResponse {
-  // Objects that this server is able to detect in images.
+  // Objects that this server is able to detect.
   repeated string available_object = 1;
 }
 
 message ImageDetectionRequest {
-  // Object(s) to detect; must be supported by this server. Case-insensitive.
-  repeated string object_to_detect = 1;
-  // Image to analyze as bytes. Image size must be less than 2^32 bytes.
-  bytes image = 3;
+  /**
+    Image to run detector on. The provided byte stream can be an image encoded
+    in common formats such as JPG & PNG (like the contents of image files) or it
+    can be a raw image. Must be less than 2^32 bytes.
+   */
+  bytes image = 1;
 }
 
 message Detection {
@@ -45,20 +68,4 @@ message Detection {
 
 message ImageDetectionResponse {
   repeated Detection detections = 1;
-}
-
-service ImageDetection {
-  /**
-    Returns the list of objects supported by the server.
-
-    Users can send an optional list of objects to check if they are supported.
-    If sent, only supported objects within the request will be returned in the reponse.
-   */
-  rpc GetDetectableObjects(DetectableObjectsRequest) returns (DetectableObjectsResponse) {}
-
-  /**
-    Runs relevant detector(s) on the provided image to detect object(s)
-    requested by the user.
-   */
-  rpc DetectImage(ImageDetectionRequest) returns (ImageDetectionResponse) {}
 }
