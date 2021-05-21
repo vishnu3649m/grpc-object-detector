@@ -1,8 +1,8 @@
 gRPC Object Detector
 --------------------
-[![ci](https://img.shields.io/circleci/build/gh/vishnu3649m/grpc-object-detector?logo=circleci&style=flat-square)](https://app.circleci.com/pipelines/github/vishnu3649m/grpc-object-detector)
-[![codecov](https://img.shields.io/codecov/c/gh/vishnu3649m/grpc-object-detector?style=flat-square&logo=codecov)](https://app.codecov.io/gh/vishnu3649m/grpc-object-detector)
-[![LinuxOS](https://img.shields.io/badge/os-linux-lightgrey?style=flat-square)]()
+[![ci](https://img.shields.io/circleci/build/gh/vishnu3649m/grpc-object-detector?logo=circleci&style=flat)](https://app.circleci.com/pipelines/github/vishnu3649m/grpc-object-detector)
+[![codecov](https://img.shields.io/codecov/c/github/vishnu3649m/grpc-object-detector?color=11a02b&logo=codecov&style=flat)](https://app.codecov.io/gh/vishnu3649m/grpc-object-detector)
+[![LinuxOS](https://img.shields.io/badge/os-linux-lightgrey?style=flat)]()
 
 An object detection service for images via gRPC.
 
