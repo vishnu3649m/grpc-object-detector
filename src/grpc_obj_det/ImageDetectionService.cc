@@ -1,5 +1,6 @@
 
 #include <absl/strings/str_format.h>
+#include <loguru.hpp>
 #include <opencv2/opencv.hpp>
 
 #include "FaceEyesDetector.h"
@@ -7,12 +8,19 @@
 
 
 ObjDet::Grpc::ImageDetectionService::ImageDetectionService(const std::string &detector_type) {
+  LOG_F(INFO, "Instantiating detector: %s", detector_type.c_str());
   detector = ObjDet::DetectorFactory::get_detector(detector_type);
   if (detector == nullptr)
     throw ImageDetectionServiceInitError(absl::StrFormat(
         "Could not instantiate detector of type: %s",
         detector_type.c_str()));
   detector->initialize();
+  if (detector->is_initialized())
+    LOG_F(INFO, "Successfully instantiated detector: %s", detector_type.c_str());
+  else
+    throw ImageDetectionServiceInitError(absl::StrFormat(
+        "Could not instantiate detector of type: %s",
+        detector_type.c_str()));
 }
 
 grpc::Status ObjDet::Grpc::ImageDetectionService::GetDetectableObjects(::grpc::ServerContext *context,
