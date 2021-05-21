@@ -19,11 +19,16 @@ int main(int argc, char **argv) {
 
   bool version = false;
   string detector_type;
+  int port_num = 8081;
 
   app.add_flag("--version,-V", version, "Prints version info and exits");
   app.add_option("--detector-type,-d",
                  detector_type,
                  "The type of detector to serve")->required();
+  app.add_option("--port,-p",
+                 port_num,
+                 "Port for server to listen at",
+                 true);
 
   CLI11_PARSE(app, argc, argv);
 
@@ -39,7 +44,7 @@ int main(int argc, char **argv) {
   loguru::init(argc, argv);
 
   LOG_F(INFO, "Starting gRPC server...");
-  std::string address = "127.0.0.1:8081";
+  std::string address = absl::StrFormat("0.0.0.0:%d", port_num);
 
   try {
     ObjDet::Grpc::ImageDetectionService service{detector_type};
