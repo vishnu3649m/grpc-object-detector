@@ -17,11 +17,11 @@ void ObjDet::OnnxYoloV4Detector::initialize() {
   std::vector<std::string> input_names = session->GetInputNames();
   std::vector<std::vector<int64_t> > input_shapes = session->GetInputShapes();
 
-  LOG_F(INFO,
+  LOG_F(1,
         "ONNX Yolo Model Input Node Name/Shape (%zu):",
         input_names.size());
   for (size_t i = 0; i < input_names.size(); i++)
-    LOG_F(INFO,
+    LOG_F(1,
           "\t%s : %s",
           input_names[i].data(),
           print_shape(input_shapes[i]).data());
@@ -43,11 +43,11 @@ void ObjDet::OnnxYoloV4Detector::initialize() {
 
   std::vector<std::string> output_names = session->GetOutputNames();
   std::vector<std::vector<int64_t> > output_shapes = session->GetOutputShapes();
-  LOG_F(INFO,
+  LOG_F(1,
         "ONNX Yolo Model Output Node Name/Shape (%zu):",
         output_names.size());
   for (size_t i = 0; i < output_names.size(); i++)
-    LOG_F(INFO,
+    LOG_F(1,
           "\t%s : %s",
           output_names[i].data(),
           print_shape(output_shapes[i]).data());
@@ -70,7 +70,7 @@ void ObjDet::OnnxYoloV4Detector::initialize() {
     std::stringstream ss;
     for (const auto &a : this->anchors)
       ss << a << ",";
-    LOG_F(INFO, "Anchors read in: %s", ss.str().c_str());
+    LOG_F(1, "Anchors read in: %s", ss.str().c_str());
   } else {
     LOG_F(WARNING,
           "Not initializing detector due to errors in reading anchors");
@@ -94,11 +94,11 @@ std::vector<ObjDet::Detection> ObjDet::OnnxYoloV4Detector::detect(const cv::Mat 
   int img_w = img.size().width;
   int img_h = img.size().height;
 
-  LOG_F(INFO, "Image size: %d x %d x %d", img_w, img_h, img.channels());
+  LOG_F(1, "Image size: %d x %d x %d", img_w, img_h, img.channels());
 
   std::vector<float> input_tensor_raw = preprocess_image(img, this->input_size);
 
-  LOG_F(INFO, "");
+  LOG_F(1, "");
 
   std::vector<Ort::Value> input_tensors;
   std::vector<int64_t> input_tensor_shape = {1, input_size, input_size, 3};
@@ -122,7 +122,7 @@ std::vector<ObjDet::Detection> ObjDet::OnnxYoloV4Detector::detect(const cv::Mat 
                                           this->anchors,
                                           this->input_size);
 
-  LOG_F(INFO, "");
+  LOG_F(1, "");
 
   auto img_preds = filter_predictions(parsed_preds,
                                       float(img_h),
@@ -130,7 +130,7 @@ std::vector<ObjDet::Detection> ObjDet::OnnxYoloV4Detector::detect(const cv::Mat 
                                       float(this->input_size),
                                       0.25f);
 
-  LOG_F(INFO, "");
+  LOG_F(1, "");
 
   for (auto &preds : img_preds)
     dets = nms(preds, 0.213f);

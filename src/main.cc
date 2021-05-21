@@ -15,11 +15,13 @@ using namespace std;
 #define GRPC_OBJ_DET_VERSION_PATCH 0
 
 int main(int argc, char **argv) {
-  CLI::App app{"gRPC Object Detector"};
+  loguru::init(argc, argv);
 
   bool version = false;
   string detector_type;
   int port_num = 8081;
+
+  CLI::App app{"gRPC Object Detector"};
 
   app.add_flag("--version,-V", version, "Prints version info and exits");
   app.add_option("--detector-type,-d",
@@ -40,8 +42,6 @@ int main(int argc, char **argv) {
     cout << version_msg << endl;
     return 0;
   }
-
-  loguru::init(argc, argv);
 
   LOG_F(INFO, "Starting gRPC server...");
   std::string address = absl::StrFormat("0.0.0.0:%d", port_num);

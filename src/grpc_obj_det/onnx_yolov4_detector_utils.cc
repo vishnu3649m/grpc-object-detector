@@ -63,10 +63,10 @@ bool read_anchors(const std::string &filepath,
     }
 
     if (anchors.size() == n_anchors * 3 * 2) {
-      LOG_F(INFO, "Read in anchors successfully");
+      LOG_F(1, "Read in anchors successfully");
       return true;
     } else {
-      LOG_F(INFO, "Supposed to read %zu anchors but only read %zu",
+      LOG_F(ERROR, "Supposed to read %zu anchors but only read %zu",
             n_anchors * 3 * 2, anchors.size());
       return false;
     }
@@ -100,7 +100,7 @@ bool read_labels(const std::string &filepath,
   file.close();
 
   if (cls_labels.size() == n_classes) {
-    LOG_F(INFO, "Read in labels for %ld classes successfully", n_classes);
+    LOG_F(1, "Read in labels for %ld classes successfully", n_classes);
     return true;
   } else {
     LOG_F(ERROR, "Expected %ld labels but only read in %zu labels!",
@@ -244,10 +244,10 @@ xt::xarray<float> get_all_predictions(const std::vector<Ort::Value> &outputs,
                                                      pred_boxes[2]),
                                      1);
 
-  LOG_F(INFO, "Predictions: %s", print_shape(predictions).c_str());
+  LOG_F(1, "Predictions: %s", print_shape(predictions).c_str());
   std::vector<int> idxes{450, 2000, 5000, 7329, 9999};
   for (int idx : idxes)
-    LOG_F(INFO,
+    LOG_F(1,
           "%f, %f, %f",
           predictions.at(0, idx, 0),
           predictions.at(0, idx, 4),
@@ -350,10 +350,10 @@ std::vector<std::vector<ObjDet::Detection>> filter_predictions(xt::xarray<float>
 
   int _i = 0;
   for (const auto &img_preds : filtered_preds) {
-    LOG_F(INFO, "Preds for img %d:", _i++);
+    LOG_F(1, "Preds for img %d:", _i++);
     for (int _j = 0; _j < img_preds.size(); _j += 4) {
       const auto &pred = img_preds[_j];
-      LOG_F(INFO,
+      LOG_F(1,
             "%.3f\t%.3f\t%.3f\t%.3f\t%.3f\t%d",
             pred.box.left,
             pred.box.top,
