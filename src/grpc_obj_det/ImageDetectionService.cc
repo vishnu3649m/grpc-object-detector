@@ -1,9 +1,10 @@
 
+#include <chrono>
+
 #include <absl/strings/str_format.h>
 #include <loguru.hpp>
 #include <opencv2/opencv.hpp>
 
-#include "FaceEyesDetector.h"
 #include "ImageDetectionService.h"
 
 
@@ -26,21 +27,30 @@ ObjDet::Grpc::ImageDetectionService::ImageDetectionService(const std::string &de
 grpc::Status ObjDet::Grpc::ImageDetectionService::GetDetectableObjects(::grpc::ServerContext *context,
                                                                        const ::ObjDet::Grpc::DetectableObjectsRequest *request,
                                                                        ::ObjDet::Grpc::DetectableObjectsResponse *response) {
+  LOG_F(INFO, "GetDetectableObjects request received");
   for (const auto &obj : detector->available_objects_lookup())
     response->add_available_object(obj);
 
+  LOG_F(INFO, "Responding: OK");
   return grpc::Status::OK;
 }
 
 grpc::Status ObjDet::Grpc::ImageDetectionService::DetectImage(::grpc::ServerContext *context,
                                                               const ::ObjDet::Grpc::ImageDetectionRequest *request,
                                                               ::ObjDet::Grpc::ImageDetectionResponse *response) {
+  LOG_F(INFO, "DetectImage request received");
+  auto t_start = std::chrono::high_resolution_clock::now();
+
   std::vector<char> img_bytes(request->image().begin(), request->image().end());
   cv::Mat img = cv::imdecode(img_bytes, cv::IMREAD_COLOR);
 
-  if (img.empty())
+  if (img.empty()) {
+    LOG_F(INFO, "Responding: INVALID ARGUMENT - Valid image could not be "
+                "parsed from the provided bytes.");
     return grpc::Status(grpc::StatusCode::INVALID_ARGUMENT,
                         "Valid image could not be parsed from the provided bytes.");
+  }
+
 
   cv::Size size = img.size();
 
@@ -55,5 +65,11 @@ grpc::Status ObjDet::Grpc::ImageDetectionService::DetectImage(::grpc::ServerCont
     detection_msg->set_height(int(det.box.height * size.height));
   }
 
+  auto t_end = std::chrono::high_resolution_clock::now();
+
+  std::chrono::duration<double, std::milli> elapsed = t_end - t_start;
+
+  LOG_F(INFO, "Responding: OK - Took %f ms; Detections: %zu",
+        elapsed.count(), detections.size());
   return grpc::Status::OK;
 }

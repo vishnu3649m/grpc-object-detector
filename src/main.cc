@@ -15,6 +15,9 @@ using namespace std;
 #define GRPC_OBJ_DET_VERSION_PATCH 0
 
 int main(int argc, char **argv) {
+  loguru::g_preamble_date = false;
+  loguru::g_preamble_time = false;
+  loguru::g_preamble_file = false;
   loguru::init(argc, argv);
 
   bool version = false;
