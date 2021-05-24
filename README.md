@@ -6,6 +6,8 @@ gRPC Object Detector
 
 An object detection service for images via gRPC.
 
+![demo](examples/demo.gif)
+
 ## Introduction
 
 The main motivation for this project is to explore gRPC and to see how well-suited 
