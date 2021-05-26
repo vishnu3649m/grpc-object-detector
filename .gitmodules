@@ -10,9 +10,6 @@
 [submodule "libs/CLI11"]
 	path = libs/CLI11
 	url = https://github.com/CLIUtils/CLI11
-[submodule "libs/onnxruntime"]
-	path = libs/onnxruntime
-	url = https://github.com/microsoft/onnxruntime.git
 [submodule "libs/xtl"]
 	path = libs/xtl
 	url = https://github.com/xtensor-stack/xtl.git
