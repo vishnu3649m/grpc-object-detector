@@ -31,8 +31,14 @@ class ImageDetectionService final : public ::ObjDet::Grpc::ImageDetection::Servi
                            const ::ObjDet::Grpc::ImageDetectionRequest *request,
                            ::ObjDet::Grpc::ImageDetectionResponse *response) override;
 
+  grpc::Status DetectMultipleImages(grpc::ServerContext *context,
+                                    grpc::ServerReaderWriter<ObjDet::Grpc::ImageDetectionResponse,
+                                                             ObjDet::Grpc::ImageDetectionRequest> *stream) override;
+
  private:
   std::unique_ptr<ObjDet::DetectorInterface> detector;
+  std::mutex stream_mutex;
+  void process_image(const cv::Mat &img, ImageDetectionResponse &resp);
 };
 
 }

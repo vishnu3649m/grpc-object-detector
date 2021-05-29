@@ -22,6 +22,12 @@ service ImageDetection {
     Runs object detector(s) on the provided image and returns detections.
    */
   rpc DetectImage(ImageDetectionRequest) returns (ImageDetectionResponse) {}
+
+  /**
+    Processes a stream of one or more images through object detector(s) and
+    returns list of detections for each image (in requested order).
+   */
+  rpc DetectMultipleImages(stream ImageDetectionRequest) returns (stream ImageDetectionResponse) {}
 }
 
 message DetectableObjectsRequest {

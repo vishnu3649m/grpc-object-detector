@@ -51,12 +51,48 @@ grpc::Status ObjDet::Grpc::ImageDetectionService::DetectImage(::grpc::ServerCont
                         "Valid image could not be parsed from the provided bytes.");
   }
 
+  process_image(img, *response);
 
+  auto t_end = std::chrono::high_resolution_clock::now();
+
+  std::chrono::duration<double, std::milli> elapsed = t_end - t_start;
+
+  LOG_F(INFO, "Responding: OK - Took %f ms; Detections: %d",
+        elapsed.count(), response->detections().size());
+  return grpc::Status::OK;
+}
+
+grpc::Status ObjDet::Grpc::ImageDetectionService::DetectMultipleImages(
+    grpc::ServerContext *context,
+    grpc::ServerReaderWriter<ObjDet::Grpc::ImageDetectionResponse,
+                             ObjDet::Grpc::ImageDetectionRequest> *stream) {
+
+  ObjDet::Grpc::ImageDetectionRequest image_request;
+  while(stream->Read(&image_request)) {
+    std::unique_lock<std::mutex> lock(this->stream_mutex);
+    ObjDet::Grpc::ImageDetectionResponse response;
+
+    std::vector<char> img_bytes(image_request.image().begin(), image_request.image().end());
+    cv::Mat img = cv::imdecode(img_bytes, cv::IMREAD_COLOR);
+    if (img.empty()) {
+      LOG_F(WARNING, "Valid image could not be parsed from the provided bytes. "
+                     "Skipping this image and sending empty list of detections");
+    } else {
+      process_image(img, response);
+    }
+
+    stream->Write(response);
+  }
+
+  return grpc::Status::OK;
+}
+
+void ObjDet::Grpc::ImageDetectionService::process_image(const cv::Mat &img,
+                                                        ObjDet::Grpc::ImageDetectionResponse &resp) {
   cv::Size size = img.size();
-
   auto detections = detector->detect(img);
   for (const auto &det : detections) {
-    auto *detection_msg = response->add_detections();
+    auto *detection_msg = resp.add_detections();
     detection_msg->set_object_name(detector->class_id_to_label(det.class_id));
     detection_msg->set_confidence(det.confidence);
     detection_msg->set_top_left_x(int(det.box.left * size.width));
@@ -64,12 +100,4 @@ grpc::Status ObjDet::Grpc::ImageDetectionService::DetectImage(::grpc::ServerCont
     detection_msg->set_width(int(det.box.width * size.width));
     detection_msg->set_height(int(det.box.height * size.height));
   }
-
-  auto t_end = std::chrono::high_resolution_clock::now();
-
-  std::chrono::duration<double, std::milli> elapsed = t_end - t_start;
-
-  LOG_F(INFO, "Responding: OK - Took %f ms; Detections: %zu",
-        elapsed.count(), detections.size());
-  return grpc::Status::OK;
 }
