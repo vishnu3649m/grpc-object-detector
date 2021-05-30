@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x15image_detection.proto\x12\x0bObjDet.Grpc\"\x1a\n\x18\x44\x65tectableObjectsRequest\"5\n\x19\x44\x65tectableObjectsResponse\x12\x18\n\x10\x61vailable_object\x18\x01 \x03(\t\"&\n\x15ImageDetectionRequest\x12\r\n\x05image\x18\x01 \x01(\x0c\"{\n\tDetection\x12\x13\n\x0bobject_name\x18\x01 \x01(\t\x12\x12\n\nconfidence\x18\x03 \x01(\x02\x12\x12\n\ntop_left_x\x18\x05 \x01(\x05\x12\x12\n\ntop_left_y\x18\x07 \x01(\x05\x12\r\n\x05width\x18\t \x01(\x05\x12\x0e\n\x06height\x18\x0b \x01(\x05\"D\n\x16ImageDetectionResponse\x12*\n\ndetections\x18\x01 \x03(\x0b\x32\x16.ObjDet.Grpc.Detection2\xd3\x01\n\x0eImageDetection\x12g\n\x14GetDetectableObjects\x12%.ObjDet.Grpc.DetectableObjectsRequest\x1a&.ObjDet.Grpc.DetectableObjectsResponse\"\x00\x12X\n\x0b\x44\x65tectImage\x12\".ObjDet.Grpc.ImageDetectionRequest\x1a#.ObjDet.Grpc.ImageDetectionResponse\"\x00\x62\x06proto3'
+  serialized_pb=b'\n\x15image_detection.proto\x12\x0bObjDet.Grpc\"\x1a\n\x18\x44\x65tectableObjectsRequest\"5\n\x19\x44\x65tectableObjectsResponse\x12\x18\n\x10\x61vailable_object\x18\x01 \x03(\t\"&\n\x15ImageDetectionRequest\x12\r\n\x05image\x18\x01 \x01(\x0c\"{\n\tDetection\x12\x13\n\x0bobject_name\x18\x01 \x01(\t\x12\x12\n\nconfidence\x18\x03 \x01(\x02\x12\x12\n\ntop_left_x\x18\x05 \x01(\x05\x12\x12\n\ntop_left_y\x18\x07 \x01(\x05\x12\r\n\x05width\x18\t \x01(\x05\x12\x0e\n\x06height\x18\x0b \x01(\x05\"D\n\x16ImageDetectionResponse\x12*\n\ndetections\x18\x01 \x03(\x0b\x32\x16.ObjDet.Grpc.Detection2\xba\x02\n\x0eImageDetection\x12g\n\x14GetDetectableObjects\x12%.ObjDet.Grpc.DetectableObjectsRequest\x1a&.ObjDet.Grpc.DetectableObjectsResponse\"\x00\x12X\n\x0b\x44\x65tectImage\x12\".ObjDet.Grpc.ImageDetectionRequest\x1a#.ObjDet.Grpc.ImageDetectionResponse\"\x00\x12\x65\n\x14\x44\x65tectMultipleImages\x12\".ObjDet.Grpc.ImageDetectionRequest\x1a#.ObjDet.Grpc.ImageDetectionResponse\"\x00(\x01\x30\x01\x62\x06proto3'
 )
 
 
@@ -265,7 +265,7 @@ _IMAGEDETECTION = _descriptor.ServiceDescriptor(
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
   serialized_start=357,
-  serialized_end=568,
+  serialized_end=671,
   methods=[
   _descriptor.MethodDescriptor(
     name='GetDetectableObjects',
@@ -281,6 +281,16 @@ _IMAGEDETECTION = _descriptor.ServiceDescriptor(
     name='DetectImage',
     full_name='ObjDet.Grpc.ImageDetection.DetectImage',
     index=1,
+    containing_service=None,
+    input_type=_IMAGEDETECTIONREQUEST,
+    output_type=_IMAGEDETECTIONRESPONSE,
+    serialized_options=None,
+    create_key=_descriptor._internal_create_key,
+  ),
+  _descriptor.MethodDescriptor(
+    name='DetectMultipleImages',
+    full_name='ObjDet.Grpc.ImageDetection.DetectMultipleImages',
+    index=2,
     containing_service=None,
     input_type=_IMAGEDETECTIONREQUEST,
     output_type=_IMAGEDETECTIONRESPONSE,
