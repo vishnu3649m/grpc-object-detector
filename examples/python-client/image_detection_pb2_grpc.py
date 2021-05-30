@@ -24,6 +24,11 @@ class ImageDetectionStub(object):
                 request_serializer=image__detection__pb2.ImageDetectionRequest.SerializeToString,
                 response_deserializer=image__detection__pb2.ImageDetectionResponse.FromString,
                 )
+        self.DetectMultipleImages = channel.stream_stream(
+                '/ObjDet.Grpc.ImageDetection/DetectMultipleImages',
+                request_serializer=image__detection__pb2.ImageDetectionRequest.SerializeToString,
+                response_deserializer=image__detection__pb2.ImageDetectionResponse.FromString,
+                )
 
 
 class ImageDetectionServicer(object):
@@ -45,6 +50,15 @@ class ImageDetectionServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def DetectMultipleImages(self, request_iterator, context):
+        """*
+        Processes a stream of one or more images through object detector(s) and
+        returns list of detections for each image (in requested order).
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_ImageDetectionServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -55,6 +69,11 @@ def add_ImageDetectionServicer_to_server(servicer, server):
             ),
             'DetectImage': grpc.unary_unary_rpc_method_handler(
                     servicer.DetectImage,
+                    request_deserializer=image__detection__pb2.ImageDetectionRequest.FromString,
+                    response_serializer=image__detection__pb2.ImageDetectionResponse.SerializeToString,
+            ),
+            'DetectMultipleImages': grpc.stream_stream_rpc_method_handler(
+                    servicer.DetectMultipleImages,
                     request_deserializer=image__detection__pb2.ImageDetectionRequest.FromString,
                     response_serializer=image__detection__pb2.ImageDetectionResponse.SerializeToString,
             ),
@@ -97,6 +116,23 @@ class ImageDetection(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/ObjDet.Grpc.ImageDetection/DetectImage',
+            image__detection__pb2.ImageDetectionRequest.SerializeToString,
+            image__detection__pb2.ImageDetectionResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def DetectMultipleImages(request_iterator,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.stream_stream(request_iterator, target, '/ObjDet.Grpc.ImageDetection/DetectMultipleImages',
             image__detection__pb2.ImageDetectionRequest.SerializeToString,
             image__detection__pb2.ImageDetectionResponse.FromString,
             options, channel_credentials,
