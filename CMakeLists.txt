@@ -39,7 +39,6 @@ add_library(objdet-server-core STATIC
 target_include_directories(objdet-server-core PUBLIC
         protos/build
         libs/loguru
-        libs/CLI11/include
         libs/onnxruntime/include
         libs/xtl/include
         libs/xtensor/include)
@@ -54,38 +53,23 @@ target_link_libraries(objdet-server-core PUBLIC
         onnxruntime)
 
 add_executable(grpc-objdet-server src/main.cc)
-target_link_libraries(grpc-objdet-server PUBLIC loguru objdet-server-core)
+target_include_directories(grpc-objdet-server PUBLIC libs/CLI11/include)
+target_link_libraries(grpc-objdet-server PUBLIC objdet-server-core)
 
 add_executable(test-objdet-server
-        src/grpc_obj_det/DetectorInterface.h
-        src/grpc_obj_det/FaceEyesDetector.h src/grpc_obj_det/FaceEyesDetector.cc
-        src/grpc_obj_det/ImageDetectionService.cc src/grpc_obj_det/ImageDetectionService.h
-        src/grpc_obj_det/OnnxYoloV4Detector.cc src/grpc_obj_det/OnnxYoloV4Detector.h
-        src/grpc_obj_det/onnx_yolov4_detector_utils.cc
         tests/test_detector_interface.cc
         tests/test_img_det_service.cc
         tests/test_onnx_yolov4_detector.cc)
 target_link_libraries(test-objdet-server PUBLIC
-        objdet-grpc-proto
-        loguru
-        pthread
-        dl
-        ${OPENCV_LIBRARIES}
-        onnxruntime
+        objdet-server-core
         gtest
-        gtest_main
-        absl::strings
-        absl::str_format)
+        gtest_main)
 target_include_directories(test-objdet-server PUBLIC
         src
         protos/build
-        libs/loguru
-        libs/onnxruntime/include
-        libs/xtl/include
-        libs/xtensor/include
         libs/googletest/googletest/include)
-target_compile_options(test-objdet-server PUBLIC -O0 -g --coverage)
-target_link_options(test-objdet-server PUBLIC --coverage)
+target_compile_options(test-objdet-server PUBLIC -O0 -g -fsanitize=address -fno-omit-frame-pointer --coverage)
+target_link_options(test-objdet-server PUBLIC -fsanitize=address -fno-omit-frame-pointer --coverage)
 add_test(NAME objdet_server_tests COMMAND test-objdet-server)
 
 install(TARGETS grpc-objdet-server DESTINATION /usr/local/bin)

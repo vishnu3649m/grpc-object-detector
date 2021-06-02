@@ -76,3 +76,9 @@ For example, to serve a YOLOv4 model trained on the COCO dataset, run:
 grpc-objdet-server -d onnx_yolov4_coco
 ```
 
+#### Running the tests
+Tests are built by default and the executable would be inside the `build` directory. To run:
+```shell
+./build/test-objdet-server
+```
+The test executable is built with AddressSanitizer and LeakSanitizer for detecting memory errors and leaks. 
