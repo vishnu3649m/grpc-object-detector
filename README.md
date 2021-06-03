@@ -10,20 +10,26 @@ An object detection service for images via gRPC.
 
 ## Introduction
 
-This project was started to explore gRPC and to see how it can be used for providing 
+This project was started to explore gRPC and to see how well it can be used for providing 
 object detection as a service. It runs a deep learning-based object detector on
 your images to detect objects.
 
 Feel free to fork this repo and adapt this for your own object detection services.
 
 This server provides the following services:
-- Running object detection on images
-    - `GetDetectableObjects`: Returns the list of objects the server can detect
-    - `DetectImage`: Returns a list of detections for an image
+- `GetDetectableObjects`: Returns the list of objects the server can detect
+- `DetectImage`: Returns a list of detections for an image
+- `DetectMultipleImages`: Takes in a stream of images and responds with a stream of detection responses for those images in order
 
-Refer to the [protos](protos) directory for more usage details of the gRPC services.
+Refer to the [protos](protos) directory for exact details of the gRPC services.
 
-## Building gRPC Object Detector
+There are 2 detectors included:
+- `cascade_face_detector`: A Haar cascade classifier found in OpenCV. (Was used to quickly set up a detector to test the server)
+- `onnx_yolov4_coco`: A YOLOv4 model trained on COCO (from the [ONNX model zoo](https://github.com/onnx/models/tree/master/vision/object_detection_segmentation/yolov4)). 
+
+You can add your own detectors. See the section ["Adding your own detectors"](#adding-your-own-detectors) below.
+
+## Building, Installing, Testing & Running
 gRPC Object Detector is currently developed for 64-bit Linux only.
 
 #### Dependencies
@@ -46,7 +52,7 @@ The following third-party libraries are included as submodules within this repo:
 - [xtensor](https://xtensor.readthedocs.io/en/latest/) (for multi-dimensional array processing)
 
 #### Building and Installing
-```
+```shell
 git clone --recursive https://github.com/vishnu3649m/grpc-object-detector.git
 cd grpc-object-detector
 mkdir build && cd build
@@ -77,8 +83,24 @@ grpc-objdet-server -d onnx_yolov4_coco
 ```
 
 #### Running the tests
-Tests are built by default and the executable would be inside the `build` directory. To run:
+Tests are built by default when running make within the `build` directory. To run:
 ```shell
 ./build/test-objdet-server
 ```
-The test executable is built with AddressSanitizer and LeakSanitizer for detecting memory errors and leaks. 
+> NOTE:</br>Like what was mentioned for running the server, it is important to run the
+> tests from this directory for it to find the config files (to initialize the 
+> detectors) and for it to use the data files within `tests/data`.
+
+The test executable is built with [AddressSanitizer and LeakSanitizer](https://github.com/google/sanitizers/wiki/AddressSanitizer) 
+for detecting memory errors and leaks.
+
+## Adding your own detectors
+To create a detector for the server to serve, subclass `ObjDet::DetectorInterface` 
+and implement all necessary methods. Refer to the [header](src/grpc_obj_det/DetectorInterface.h) 
+for the methods' signature and purpose.
+
+The server loads detectors using this factory method: `ObjDet::DetectorFactory::get_detector`. 
+This method creates an instance of the requested detector and returns it. Register
+your concrete detector implementation with the factory by assigning a name for
+it and adding an entry within the factory method. This name should be specified
+as the `-d` option of `grpc-objdet-server`.
