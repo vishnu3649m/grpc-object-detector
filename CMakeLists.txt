@@ -68,8 +68,8 @@ target_include_directories(test-objdet-server PUBLIC
         src
         protos/build
         libs/googletest/googletest/include)
-target_compile_options(test-objdet-server PUBLIC -O0 -g -fsanitize=address -fno-omit-frame-pointer --coverage)
-target_link_options(test-objdet-server PUBLIC -fsanitize=address -fno-omit-frame-pointer --coverage)
+target_compile_options(test-objdet-server PUBLIC -O0 -g --coverage)
+target_link_options(test-objdet-server PUBLIC --coverage)
 add_test(NAME objdet_server_tests COMMAND test-objdet-server)
 
 install(TARGETS grpc-objdet-server DESTINATION /usr/local/bin)

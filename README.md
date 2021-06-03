@@ -91,9 +91,6 @@ Tests are built by default when running make within the `build` directory. To ru
 > tests from this directory for it to find the config files (to initialize the 
 > detectors) and for it to use the data files within `tests/data`.
 
-The test executable is built with [AddressSanitizer and LeakSanitizer](https://github.com/google/sanitizers/wiki/AddressSanitizer) 
-for detecting memory errors and leaks.
-
 ## Adding your own detectors
 To create a detector for the server to serve, subclass `ObjDet::DetectorInterface` 
 and implement all necessary methods. Refer to the [header](src/grpc_obj_det/DetectorInterface.h) 
