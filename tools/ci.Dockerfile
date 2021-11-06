@@ -6,7 +6,7 @@ ENV DEBIAN_FRONTEND="noninteractive"
 RUN apt-get update
 RUN apt-get install -y build-essential git curl wget \
     apt-transport-https ca-certificates software-properties-common gnupg \
-    autoconf libtool pkg-config \
+    autoconf libtool pkg-config libssl-dev \
     libopencv-dev lcov
 
 # Install git lfs for downloading model files
@@ -14,11 +14,10 @@ RUN curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.d
 RUN apt-get install -y git-lfs
 RUN git lfs install
 
-# Install cmake
-RUN wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | tee /etc/apt/trusted.gpg.d/kitware.gpg >/dev/null
-RUN apt-add-repository "deb https://apt.kitware.com/ubuntu/ $(cat /etc/os-release | grep UBUNTU_CODENAME | sed 's/.*=//') main"
-RUN apt-get update
-RUN apt-get install cmake=3.15.0-0kitware1 cmake-data=3.15.0-0kitware1
+# Install cmake-3.13.5
+WORKDIR /root
+RUN wget http://www.cmake.org/files/v3.18/cmake-3.18.6.tar.gz
+RUN tar xzf cmake-3.18.6.tar.gz && cd cmake-3.18.6 && ./configure && make -j $(nproc) && make install
 
 # Install grpc and libonnxruntime from tool scripts
 WORKDIR /root
