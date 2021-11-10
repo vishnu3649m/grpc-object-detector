@@ -1,51 +1,58 @@
-/**
+/*
   Image detection service
   -----------------------
 
-  This service allows users to use an object detection model to detect objects
-  within their images. The type of object detector can be configured upon server
-  startup.
+  This service runs inference on images using object detection models to
+  produce detections. Users can view and choose detectors.
  */
-
 
 syntax = "proto3";
 
 package ObjDet.Grpc;
 
 service ImageDetection {
-  /**
-    Returns the list of objects detectable by object detection model(s) in the server.
+  /*
+    Returns list of detectors and the objects they detect.
    */
-  rpc GetDetectableObjects(DetectableObjectsRequest) returns (DetectableObjectsResponse) {}
+  rpc ListAvailableDetectors(AvailableDetectorsRequest)
+      returns (AvailableDetectorsResponse) {}
 
-  /**
-    Runs object detector(s) on the provided image and returns detections.
+  /*
+    Runs specified object detector on the provided image and returns detections.
    */
   rpc DetectImage(ImageDetectionRequest) returns (ImageDetectionResponse) {}
 
-  /**
-    Processes a stream of one or more images through object detector(s) and
+  /*
+    Processes a stream of one or more images through specified object detector and
     returns list of detections for each image (in requested order).
    */
-  rpc DetectMultipleImages(stream ImageDetectionRequest) returns (stream ImageDetectionResponse) {}
+  rpc DetectMultipleImages(stream ImageDetectionRequest)
+    returns (stream ImageDetectionResponse) {}
 }
 
-message DetectableObjectsRequest {
+message AvailableDetectorsRequest {
   /*
-    Unused.
-
-    A placeholder message for future use since gRPC APIs can't be called without
-    requests.
+    Placeholder message for ListAvailableDetectors request.
+    Since gRPC APIs can't be called without requests.
    */
 }
 
-message DetectableObjectsResponse {
-  // Objects that this server is able to detect.
-  repeated string available_object = 1;
+message DetectorInfo {
+  // Name assigned by the server to describe detector
+  string name = 1;
+  // Model name of the object detector (YOLOv3, FasterRCNN, etc.)
+  string model = 3;
+  // List of object labels detected by the detector
+  repeated string detected_objects = 5;
+}
+
+message AvailableDetectorsResponse {
+  // Detectors available on the server
+  repeated DetectorInfo detectors = 1;
 }
 
 message ImageDetectionRequest {
-  /**
+  /*
     Image to run detector on. The provided byte stream can be an image encoded
     in common formats such as JPG & PNG (like the contents of image files) or it
     can be a raw image. Must be less than 2^32 bytes.
@@ -55,13 +62,13 @@ message ImageDetectionRequest {
 
 message Detection {
   string object_name = 1; // human-readable name of the object
-  /**
+  /*
     How confident the detector was, as a probabilistic measure, while predicting
     the presence of this object at this location within the frame. If the detector
     is not capable of producing confidence scores, this will always be 0.0.
    */
   float confidence = 3;
-  /**
+  /*
     Coordinates indicating the region of the detected object within the image.
     Y-axis's zeroth position is at the top of frame. Note: Some detectors might
     predict boxes that extend out of the image's dimensions.

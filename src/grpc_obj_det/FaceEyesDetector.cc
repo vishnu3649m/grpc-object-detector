@@ -60,3 +60,7 @@ std::unordered_set<std::string> ObjDet::FaceEyesDetector::available_objects_look
   return std::unordered_set<std::string>(class_label_map.begin(),
                                          class_label_map.end());
 }
+
+std::pair<std::string, std::string> ObjDet::FaceEyesDetector::describe() const {
+  return {this->name, this->model};
+}

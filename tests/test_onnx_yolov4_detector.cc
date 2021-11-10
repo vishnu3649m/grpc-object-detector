@@ -9,7 +9,8 @@ using namespace std;
 #define TEST_ABS_ERROR 0.0001
 
 TEST(OnnxYoloV4DetectorTest, CanInitWhenProvidedValidConfigFiles) {
-  auto detector = ObjDet::OnnxYoloV4Detector("config/onnx_yolov4/yolov4.onnx",
+  auto detector = ObjDet::OnnxYoloV4Detector("onnx_yolov4_coco",
+                                             "config/onnx_yolov4/yolov4.onnx",
                                              "config/onnx_yolov4/yolov4_anchors.txt",
                                              "config/onnx_yolov4/coco_labels.txt");
   detector.initialize();
@@ -17,7 +18,8 @@ TEST(OnnxYoloV4DetectorTest, CanInitWhenProvidedValidConfigFiles) {
 }
 
 TEST(OnnxYoloV4DetectorTest, DoesNotInitWhenProvidedInvalidOnnxFile) {
-  auto detector = ObjDet::OnnxYoloV4Detector("tests/data/squeezenet1.0-7.onnx",
+  auto detector = ObjDet::OnnxYoloV4Detector("onnx_yolov4_coco",
+                                             "tests/data/squeezenet1.0-7.onnx",
                                              "config/onnx_yolov4/yolov4_anchors.txt",
                                              "config/onnx_yolov4/coco_labels.txt");
   detector.initialize();
@@ -25,13 +27,15 @@ TEST(OnnxYoloV4DetectorTest, DoesNotInitWhenProvidedInvalidOnnxFile) {
 }
 
 TEST(OnnxYoloV4DetectorTest, DoesNotInitWhenProvidedInvalidAnchorsFile) {
-  auto detector = ObjDet::OnnxYoloV4Detector("config/onnx_yolov4/yolov4.onnx",
+  auto detector = ObjDet::OnnxYoloV4Detector("onnx_yolov4_coco",
+                                             "config/onnx_yolov4/yolov4.onnx",
                                              "tests/data/invalid_yolov4_coco_anchors_1.txt",
                                              "config/onnx_yolov4/coco_labels.txt");
   detector.initialize();
   ASSERT_FALSE(detector.is_initialized());
 
-  detector = ObjDet::OnnxYoloV4Detector("config/onnx_yolov4/yolov4.onnx",
+  detector = ObjDet::OnnxYoloV4Detector("onnx_yolov4_coco",
+                                        "config/onnx_yolov4/yolov4.onnx",
                                         "tests/data/invalid_yolov4_coco_anchors_2.txt",
                                         "config/onnx_yolov4/coco_labels.txt");
   detector.initialize();
@@ -39,7 +43,8 @@ TEST(OnnxYoloV4DetectorTest, DoesNotInitWhenProvidedInvalidAnchorsFile) {
 }
 
 TEST(OnnxYoloV4DetectorTest, DoesNotInitWhenProvidedInvalidClassLabelsFile) {
-  auto detector = ObjDet::OnnxYoloV4Detector("config/onnx_yolov4/yolov4.onnx",
+  auto detector = ObjDet::OnnxYoloV4Detector("onnx_yolov4_coco",
+                                             "config/onnx_yolov4/yolov4.onnx",
                                              "config/onnx_yolov4/yolov4_anchors.txt",
                                              "tests/data/invalid_coco_labels.txt");
   detector.initialize();
@@ -93,10 +98,10 @@ class OnnxYoloV4ObjectDetectionTest :
 };
 
 TEST_P(OnnxYoloV4ObjectDetectionTest, CanDetectObjectsInImage) {
-  auto detector = ObjDet::OnnxYoloV4Detector(
-      "config/onnx_yolov4/yolov4.onnx",
-      "config/onnx_yolov4/yolov4_anchors.txt",
-      "config/onnx_yolov4/coco_labels.txt"
+  auto detector = ObjDet::OnnxYoloV4Detector("onnx_yolov4_coco",
+                                             "config/onnx_yolov4/yolov4.onnx",
+                                             "config/onnx_yolov4/yolov4_anchors.txt",
+                                             "config/onnx_yolov4/coco_labels.txt"
   );
   detector.initialize();
   ASSERT_TRUE(detector.is_initialized());

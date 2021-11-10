@@ -23,9 +23,9 @@ class ImageDetectionService final : public ::ObjDet::Grpc::ImageDetection::Servi
  public:
   explicit ImageDetectionService(const std::string &detector_type);
 
-  grpc::Status GetDetectableObjects(::grpc::ServerContext *context,
-                                    const ::ObjDet::Grpc::DetectableObjectsRequest *request,
-                                    ::ObjDet::Grpc::DetectableObjectsResponse *response) override;
+  grpc::Status ListAvailableDetectors(::grpc::ServerContext* context,
+                                      const ::ObjDet::Grpc::AvailableDetectorsRequest* request,
+                                      ::ObjDet::Grpc::AvailableDetectorsResponse* response) override;
 
   grpc::Status DetectImage(::grpc::ServerContext *context,
                            const ::ObjDet::Grpc::ImageDetectionRequest *request,

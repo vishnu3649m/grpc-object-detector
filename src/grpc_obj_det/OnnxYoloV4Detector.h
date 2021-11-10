@@ -128,6 +128,8 @@ namespace ObjDet {
  * * Text file containing class labels.
  */
 class OnnxYoloV4Detector : public DetectorInterface {
+  std::string name;
+  std::string model = "YoloV4";
   std::string onnx_model_path;
   std::string anchors_file_path;
   std::string class_labels_path;
@@ -139,9 +141,11 @@ class OnnxYoloV4Detector : public DetectorInterface {
   int64_t input_size = 0;
 
  public:
-  OnnxYoloV4Detector(std::string _onnx_model_path,
+  OnnxYoloV4Detector(std::string _name,
+                     std::string _onnx_model_path,
                      std::string _anchors_file_path,
                      std::string _class_labels_path) :
+      name{std::move(_name)},
       onnx_model_path{std::move(_onnx_model_path)},
       anchors_file_path{std::move(_anchors_file_path)},
       class_labels_path{std::move(_class_labels_path)} {
@@ -166,6 +170,8 @@ class OnnxYoloV4Detector : public DetectorInterface {
   void initialize() override;
 
   std::vector<Detection> detect(const cv::Mat &img) override;
+
+  std::pair<std::string, std::string> describe() const override;
 
   std::unordered_set<std::string> available_objects_lookup() const override;
 
