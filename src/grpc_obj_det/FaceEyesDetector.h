@@ -17,6 +17,8 @@
 namespace ObjDet {
 
 class FaceEyesDetector : public DetectorInterface {
+  std::string name;
+  std::string model = "HaarCascade";
   cv::CascadeClassifier face_cascade;
   cv::CascadeClassifier eyes_cascade;
   std::string face_config_file;
@@ -25,10 +27,12 @@ class FaceEyesDetector : public DetectorInterface {
   bool init = false;
 
  public:
-  FaceEyesDetector(std::string face_cascade_file,
-                   std::string eyes_cascade_file) :
-      face_config_file{std::move(face_cascade_file)},
-      eyes_config_file{std::move(eyes_cascade_file)} {
+  FaceEyesDetector(std::string _name,
+                   std::string _face_cascade_file,
+                   std::string _eyes_cascade_file) :
+      name{std::move(_name)},
+      face_config_file{std::move(_face_cascade_file)},
+      eyes_config_file{std::move(_eyes_cascade_file)} {
   }
 
   ~FaceEyesDetector() override = default;
@@ -36,6 +40,8 @@ class FaceEyesDetector : public DetectorInterface {
   void initialize() override;
 
   std::vector<Detection> detect(const cv::Mat &img) override;
+
+  std::pair<std::string, std::string> describe() const override;
 
   std::unordered_set<std::string> available_objects_lookup() const override;
 

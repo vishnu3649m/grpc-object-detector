@@ -160,3 +160,7 @@ std::unordered_set<std::string> ObjDet::OnnxYoloV4Detector::available_objects_lo
   return std::unordered_set<std::string>(class_labels.begin(),
                                          class_labels.end());
 }
+
+std::pair<std::string, std::string> ObjDet::OnnxYoloV4Detector::describe() const {
+  return {this->name, this->model};
+}

@@ -66,6 +66,14 @@ class DetectorInterface {
   virtual void initialize() = 0;
 
   /**
+   * Describes the detector and model.
+   *
+   * @return A pair containing name registered for this detector instance and
+   * the model type/architecture.
+   */
+  virtual std::pair<std::string, std::string> describe() const = 0;
+
+  /**
    * Runs object detector on an image and returns a vector of detections.
    *
    * @param img A valid image decoded by OpenCV.

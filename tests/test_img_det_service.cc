@@ -16,125 +16,131 @@ TEST(ImageDetectionServiceTest, RaisesExceptionWhenUnknownDetectorIsSpecified) {
                ObjDet::Grpc::ImageDetectionServiceInitError);
 }
 
-TEST(ImageDetectionGetDetectableObjectsTest,
-       ReturnsAllObjectsFromCascadeFaceDetector) {
-  ObjDet::Grpc::ImageDetectionService service{"cascade_face_detector"};
-  grpc::ServerContext context;
-  ObjDet::Grpc::DetectableObjectsRequest request;
-  ObjDet::Grpc::DetectableObjectsResponse response;
+TEST(ImageDetectionListAvailableDetectorsTest, ReturnsRegisteredCascadeFaceDetector) {
+    ObjDet::Grpc::ImageDetectionService service{"cascade_face_detector"};
 
-  grpc::Status status = service.GetDetectableObjects(&context, &request, &response);
+    grpc::ServerContext context;
+    ObjDet::Grpc::AvailableDetectorsRequest request;
+    ObjDet::Grpc::AvailableDetectorsResponse response;
 
-  ASSERT_TRUE(status.ok());
+    auto expected_labels = std::unordered_set<std::string>{"face", "eye"};
 
-  auto &responded_objects = response.available_object();
-  ASSERT_EQ(responded_objects.size(), 2);
-  EXPECT_NE(std::find(responded_objects.begin(),
-                      responded_objects.end(),
-                      "face"),
-            responded_objects.end());
-  EXPECT_NE(std::find(responded_objects.begin(),
-                      responded_objects.end(),
-                      "eye"),
-            responded_objects.end());
+    grpc::Status status = service.ListAvailableDetectors(&context, &request, &response);
+    ASSERT_TRUE(status.ok());
+
+    auto &registered_detectors = response.detectors();
+    ASSERT_EQ(registered_detectors.size(), 1);
+
+    auto &detector = registered_detectors[0];
+    ASSERT_EQ(detector.name(), "cascade_face_detector");
+    ASSERT_EQ(detector.model(), "HaarCascade");
+
+    std::unordered_set<std::string> received_labels(detector.detected_objects().begin(), detector.detected_objects().end());
+    ASSERT_EQ(received_labels, expected_labels);
 }
 
-TEST(ImageDetectionGetDetectableObjectsTest,
-     ReturnsAllObjectsFromDetectorTrainedOnCocoDataset) {
-  std::string coco_labels = "person\n"
-                            "bicycle\n"
-                            "car\n"
-                            "motorbike\n"
-                            "aeroplane\n"
-                            "bus\n"
-                            "train\n"
-                            "truck\n"
-                            "boat\n"
-                            "traffic light\n"
-                            "fire hydrant\n"
-                            "stop sign\n"
-                            "parking meter\n"
-                            "bench\n"
-                            "bird\n"
-                            "cat\n"
-                            "dog\n"
-                            "horse\n"
-                            "sheep\n"
-                            "cow\n"
-                            "elephant\n"
-                            "bear\n"
-                            "zebra\n"
-                            "giraffe\n"
-                            "backpack\n"
-                            "umbrella\n"
-                            "handbag\n"
-                            "tie\n"
-                            "suitcase\n"
-                            "frisbee\n"
-                            "skis\n"
-                            "snowboard\n"
-                            "sports ball\n"
-                            "kite\n"
-                            "baseball bat\n"
-                            "baseball glove\n"
-                            "skateboard\n"
-                            "surfboard\n"
-                            "tennis racket\n"
-                            "bottle\n"
-                            "wine glass\n"
-                            "cup\n"
-                            "fork\n"
-                            "knife\n"
-                            "spoon\n"
-                            "bowl\n"
-                            "banana\n"
-                            "apple\n"
-                            "sandwich\n"
-                            "orange\n"
-                            "broccoli\n"
-                            "carrot\n"
-                            "hot dog\n"
-                            "pizza\n"
-                            "donut\n"
-                            "cake\n"
-                            "chair\n"
-                            "sofa\n"
-                            "potted plant\n"
-                            "bed\n"
-                            "dining table\n"
-                            "toilet\n"
-                            "tvmonitor\n"
-                            "laptop\n"
-                            "mouse\n"
-                            "remote\n"
-                            "keyboard\n"
-                            "cell phone\n"
-                            "microwave\n"
-                            "oven\n"
-                            "toaster\n"
-                            "sink\n"
-                            "refrigerator\n"
-                            "book\n"
-                            "clock\n"
-                            "vase\n"
-                            "scissors\n"
-                            "teddy bear\n"
-                            "hair drier\n"
-                            "toothbrush";
+TEST(ImageDetectionListAvailableDetectorsTest, ReturnsRegisteredOnnxYoloV4CocoDetector) {
+    ObjDet::Grpc::ImageDetectionService service{"onnx_yolov4_coco"};
 
-  std::unordered_set<std::string> expected_labels {absl::StrSplit(coco_labels, '\n')};
+    grpc::ServerContext context;
+    ObjDet::Grpc::AvailableDetectorsRequest request;
+    ObjDet::Grpc::AvailableDetectorsResponse response;
 
-  ObjDet::Grpc::ImageDetectionService service{"onnx_yolov4_coco"};
-  grpc::ServerContext context;
-  ObjDet::Grpc::DetectableObjectsRequest request;
-  ObjDet::Grpc::DetectableObjectsResponse response;
+    std::string coco_labels = "person\n"
+                              "bicycle\n"
+                              "car\n"
+                              "motorbike\n"
+                              "aeroplane\n"
+                              "bus\n"
+                              "train\n"
+                              "truck\n"
+                              "boat\n"
+                              "traffic light\n"
+                              "fire hydrant\n"
+                              "stop sign\n"
+                              "parking meter\n"
+                              "bench\n"
+                              "bird\n"
+                              "cat\n"
+                              "dog\n"
+                              "horse\n"
+                              "sheep\n"
+                              "cow\n"
+                              "elephant\n"
+                              "bear\n"
+                              "zebra\n"
+                              "giraffe\n"
+                              "backpack\n"
+                              "umbrella\n"
+                              "handbag\n"
+                              "tie\n"
+                              "suitcase\n"
+                              "frisbee\n"
+                              "skis\n"
+                              "snowboard\n"
+                              "sports ball\n"
+                              "kite\n"
+                              "baseball bat\n"
+                              "baseball glove\n"
+                              "skateboard\n"
+                              "surfboard\n"
+                              "tennis racket\n"
+                              "bottle\n"
+                              "wine glass\n"
+                              "cup\n"
+                              "fork\n"
+                              "knife\n"
+                              "spoon\n"
+                              "bowl\n"
+                              "banana\n"
+                              "apple\n"
+                              "sandwich\n"
+                              "orange\n"
+                              "broccoli\n"
+                              "carrot\n"
+                              "hot dog\n"
+                              "pizza\n"
+                              "donut\n"
+                              "cake\n"
+                              "chair\n"
+                              "sofa\n"
+                              "potted plant\n"
+                              "bed\n"
+                              "dining table\n"
+                              "toilet\n"
+                              "tvmonitor\n"
+                              "laptop\n"
+                              "mouse\n"
+                              "remote\n"
+                              "keyboard\n"
+                              "cell phone\n"
+                              "microwave\n"
+                              "oven\n"
+                              "toaster\n"
+                              "sink\n"
+                              "refrigerator\n"
+                              "book\n"
+                              "clock\n"
+                              "vase\n"
+                              "scissors\n"
+                              "teddy bear\n"
+                              "hair drier\n"
+                              "toothbrush";
 
-  grpc::Status status = service.GetDetectableObjects(&context, &request, &response);
+    std::unordered_set<std::string> expected_labels{absl::StrSplit(coco_labels, '\n')};
 
-  ASSERT_TRUE(status.ok());
+    grpc::Status status = service.ListAvailableDetectors(&context, &request, &response);
+    ASSERT_TRUE(status.ok());
 
-  std::unordered_set<std::string> returned_labels(response.available_object().begin(), response.available_object().end());
-  ASSERT_EQ(returned_labels, expected_labels);
+    auto &registered_detectors = response.detectors();
+    ASSERT_EQ(registered_detectors.size(), 1);
+
+    auto &detector = registered_detectors[0];
+    ASSERT_EQ(detector.name(), "onnx_yolov4_coco");
+    ASSERT_EQ(detector.model(), "YoloV4");
+
+    std::unordered_set<std::string> received_labels(detector.detected_objects().begin(), detector.detected_objects().end());
+    ASSERT_EQ(received_labels, expected_labels);
 }
 
 TEST(ImageDetectionDetectImageTest, ReturnsDetections) {
@@ -146,7 +152,7 @@ TEST(ImageDetectionDetectImageTest, ReturnsDetections) {
   std::streampos img_size;
   char *img_buffer;
   std::ifstream img_file("tests/data/faces.jpg",
-  std::ios::in | std::ios::binary | std::ios::ate);
+                         std::ios::in | std::ios::binary | std::ios::ate);
   if (img_file.is_open()) {
     img_size = img_file.tellg();
     img_buffer = new char[img_size];

@@ -24,14 +24,20 @@ ObjDet::Grpc::ImageDetectionService::ImageDetectionService(const std::string &de
         detector_type.c_str()));
 }
 
-grpc::Status ObjDet::Grpc::ImageDetectionService::GetDetectableObjects(::grpc::ServerContext *context,
-                                                                       const ::ObjDet::Grpc::DetectableObjectsRequest *request,
-                                                                       ::ObjDet::Grpc::DetectableObjectsResponse *response) {
-  LOG_F(INFO, "GetDetectableObjects request received");
-  for (const auto &obj : detector->available_objects_lookup())
-    response->add_available_object(obj);
+grpc::Status ObjDet::Grpc::ImageDetectionService::ListAvailableDetectors(::grpc::ServerContext *context,
+                                                                         const ::ObjDet::Grpc::AvailableDetectorsRequest *request,
+                                                                         ::ObjDet::Grpc::AvailableDetectorsResponse *response) {
+  LOG_F(INFO, "ListAvailableDetectors request received");
 
-  LOG_F(INFO, "Responding: OK");
+  auto det_desc = detector->describe();
+
+  ObjDet::Grpc::DetectorInfo *detector_info = response->add_detectors();
+  detector_info->set_name(det_desc.first);
+  detector_info->set_model(det_desc.second);
+
+  for (const auto &obj : detector->available_objects_lookup())
+    detector_info->add_detected_objects(obj);
+
   return grpc::Status::OK;
 }
 
