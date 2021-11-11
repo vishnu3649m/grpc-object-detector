@@ -23,6 +23,7 @@ class ImageDetectionService final : public ::ObjDet::Grpc::ImageDetection::Servi
  public:
   explicit ImageDetectionService(const std::string &detector_type);
   ImageDetectionService(std::initializer_list<std::string> det_types);
+  explicit ImageDetectionService(std::vector<std::string> det_types);
 
   grpc::Status ListAvailableDetectors(::grpc::ServerContext* context,
                                       const ::ObjDet::Grpc::AvailableDetectorsRequest* request,

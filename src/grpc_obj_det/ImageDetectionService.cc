@@ -51,6 +51,11 @@ ObjDet::Grpc::ImageDetectionService::ImageDetectionService(std::initializer_list
     this->detectors[type] = init_detector(type);
 }
 
+ObjDet::Grpc::ImageDetectionService::ImageDetectionService(std::vector<std::string> det_types) {
+  for (const auto& type : det_types)
+    this->detectors[type] = init_detector(type);
+}
+
 grpc::Status ObjDet::Grpc::ImageDetectionService::ListAvailableDetectors(::grpc::ServerContext *context,
                                                                          const ::ObjDet::Grpc::AvailableDetectorsRequest *request,
                                                                          ::ObjDet::Grpc::AvailableDetectorsResponse *response) {
