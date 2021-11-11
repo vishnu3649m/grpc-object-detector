@@ -17,7 +17,7 @@ jobs:
       - run:
           name: Code Coverage
           command: |
-            gcov -b -m src/grpc_obj_det -o build/CMakeFiles/test-objdet-server.dir/src/grpc_obj_det/*
+            gcov -b -m src/grpc_obj_det -o build/CMakeFiles/objdet-server-core.dir/src/grpc_obj_det/*
             lcov -c -d . -o coverage.info
             lcov -e coverage.info "*grpc_obj_det*" -o coverage.info
             lcov -l coverage.info
