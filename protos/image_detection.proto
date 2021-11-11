@@ -54,10 +54,12 @@ message AvailableDetectorsResponse {
 message ImageDetectionRequest {
   /*
     Image to run detector on. The provided byte stream can be an image encoded
-    in common formats such as JPG & PNG (like the contents of image files) or it
-    can be a raw image. Must be less than 2^32 bytes.
+    in common formats such as JPG & PNG. Must be less than 50MB.
    */
   bytes image = 1;
+  // Server-assigned name of the detector to run. Refer to output of
+  // ListAvailableDetectors.
+  string detector_name = 3;
 }
 
 message Detection {

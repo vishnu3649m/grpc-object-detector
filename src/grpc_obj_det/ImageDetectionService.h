@@ -22,6 +22,7 @@ class ImageDetectionServiceInitError : public std::runtime_error {
 class ImageDetectionService final : public ::ObjDet::Grpc::ImageDetection::Service {
  public:
   explicit ImageDetectionService(const std::string &detector_type);
+  ImageDetectionService(std::initializer_list<std::string> det_types);
 
   grpc::Status ListAvailableDetectors(::grpc::ServerContext* context,
                                       const ::ObjDet::Grpc::AvailableDetectorsRequest* request,
@@ -36,9 +37,8 @@ class ImageDetectionService final : public ::ObjDet::Grpc::ImageDetection::Servi
                                                              ObjDet::Grpc::ImageDetectionRequest> *stream) override;
 
  private:
-  std::unique_ptr<ObjDet::DetectorInterface> detector;
+  std::unordered_map<std::string, std::unique_ptr<ObjDet::DetectorInterface>> detectors;
   std::mutex stream_mutex;
-  void process_image(const cv::Mat &img, ImageDetectionResponse &resp);
 };
 
 }

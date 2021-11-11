@@ -8,20 +8,47 @@
 #include "ImageDetectionService.h"
 
 
-ObjDet::Grpc::ImageDetectionService::ImageDetectionService(const std::string &detector_type) {
+static void process_image(const cv::Mat &img,
+                          std::unique_ptr<ObjDet::DetectorInterface> &detector,
+                          ObjDet::Grpc::ImageDetectionResponse &resp) {
+  cv::Size size = img.size();
+  auto detections = detector->detect(img);
+  for (const auto &det : detections) {
+    auto *detection_msg = resp.add_detections();
+    detection_msg->set_object_name(detector->class_id_to_label(det.class_id));
+    detection_msg->set_confidence(det.confidence);
+    detection_msg->set_top_left_x(int(det.box.left * size.width));
+    detection_msg->set_top_left_y(int(det.box.top * size.height));
+    detection_msg->set_width(int(det.box.width * size.width));
+    detection_msg->set_height(int(det.box.height * size.height));
+  }
+}
+
+static std::unique_ptr<ObjDet::DetectorInterface> init_detector(const std::string &detector_type) {
   LOG_F(INFO, "Instantiating detector: %s", detector_type.c_str());
-  detector = ObjDet::DetectorFactory::get_detector(detector_type);
+  auto detector = ObjDet::DetectorFactory::get_detector(detector_type);
   if (detector == nullptr)
-    throw ImageDetectionServiceInitError(absl::StrFormat(
-        "Could not instantiate detector of type: %s",
-        detector_type.c_str()));
+    throw ObjDet::Grpc::ImageDetectionServiceInitError(absl::StrFormat(
+      "Could not instantiate detector of type: %s",
+      detector_type.c_str()));
   detector->initialize();
-  if (detector->is_initialized())
+  if (detector->is_initialized()) {
     LOG_F(INFO, "Successfully instantiated detector: %s", detector_type.c_str());
-  else
-    throw ImageDetectionServiceInitError(absl::StrFormat(
-        "Could not instantiate detector of type: %s",
-        detector_type.c_str()));
+    return detector;
+  } else {
+    throw ObjDet::Grpc::ImageDetectionServiceInitError(absl::StrFormat(
+      "Could not instantiate detector of type: %s",
+      detector_type.c_str()));
+  }
+}
+
+ObjDet::Grpc::ImageDetectionService::ImageDetectionService(const std::string &detector_type) {
+  this->detectors[detector_type] = init_detector(detector_type);
+}
+
+ObjDet::Grpc::ImageDetectionService::ImageDetectionService(std::initializer_list<std::string> det_types) {
+  for (const auto& type : det_types)
+    this->detectors[type] = init_detector(type);
 }
 
 grpc::Status ObjDet::Grpc::ImageDetectionService::ListAvailableDetectors(::grpc::ServerContext *context,
@@ -29,14 +56,16 @@ grpc::Status ObjDet::Grpc::ImageDetectionService::ListAvailableDetectors(::grpc:
                                                                          ::ObjDet::Grpc::AvailableDetectorsResponse *response) {
   LOG_F(INFO, "ListAvailableDetectors request received");
 
-  auto det_desc = detector->describe();
+  for (const auto& detector: detectors) {
+    ObjDet::Grpc::DetectorInfo *detector_info = response->add_detectors();
 
-  ObjDet::Grpc::DetectorInfo *detector_info = response->add_detectors();
-  detector_info->set_name(det_desc.first);
-  detector_info->set_model(det_desc.second);
+    auto det_desc = detector.second->describe();
+    detector_info->set_name(det_desc.first);
+    detector_info->set_model(det_desc.second);
 
-  for (const auto &obj : detector->available_objects_lookup())
-    detector_info->add_detected_objects(obj);
+    for (const auto &obj : detector.second->available_objects_lookup())
+      detector_info->add_detected_objects(obj);
+  }
 
   return grpc::Status::OK;
 }
@@ -57,7 +86,13 @@ grpc::Status ObjDet::Grpc::ImageDetectionService::DetectImage(::grpc::ServerCont
                         "Valid image could not be parsed from the provided bytes.");
   }
 
-  process_image(img, *response);
+  if (detectors.find(request->detector_name()) != detectors.end()) {
+    process_image(img, detectors[request->detector_name()], *response);
+  } else {
+    LOG_F(INFO, "Responding: INVALID ARGUMENT - Unrecognized detector name specified.");
+    return grpc::Status(grpc::StatusCode::INVALID_ARGUMENT,
+                        "Unrecognized detector name specified. Call ListAvailableDetectors to see available detectors");
+  }
 
   auto t_end = std::chrono::high_resolution_clock::now();
 
@@ -83,27 +118,14 @@ grpc::Status ObjDet::Grpc::ImageDetectionService::DetectMultipleImages(
     if (img.empty()) {
       LOG_F(WARNING, "Valid image could not be parsed from the provided bytes. "
                      "Skipping this image and sending empty list of detections");
+    } else if (detectors.find(image_request.detector_name()) == detectors.end()) {
+      LOG_F(WARNING, "Unrecognized detector name specified. Skipping this image and sending empty list of detections");
     } else {
-      process_image(img, response);
+      process_image(img, detectors[image_request.detector_name()], response);
     }
 
     stream->Write(response);
   }
 
   return grpc::Status::OK;
-}
-
-void ObjDet::Grpc::ImageDetectionService::process_image(const cv::Mat &img,
-                                                        ObjDet::Grpc::ImageDetectionResponse &resp) {
-  cv::Size size = img.size();
-  auto detections = detector->detect(img);
-  for (const auto &det : detections) {
-    auto *detection_msg = resp.add_detections();
-    detection_msg->set_object_name(detector->class_id_to_label(det.class_id));
-    detection_msg->set_confidence(det.confidence);
-    detection_msg->set_top_left_x(int(det.box.left * size.width));
-    detection_msg->set_top_left_y(int(det.box.top * size.height));
-    detection_msg->set_width(int(det.box.width * size.width));
-    detection_msg->set_height(int(det.box.height * size.height));
-  }
 }
