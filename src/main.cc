@@ -3,6 +3,7 @@
 #include <loguru.hpp>
 #include <CLI/CLI.hpp>
 #include <absl/strings/str_format.h>
+#include <absl/strings/str_split.h>
 #include <grpcpp/server.h>
 #include <grpcpp/server_builder.h>
 
@@ -21,15 +22,15 @@ int main(int argc, char **argv) {
   loguru::init(argc, argv);
 
   bool version = false;
-  string detector_type;
+  string detectors_arg;
   int port_num = 8081;
 
   CLI::App app{"gRPC Object Detector"};
 
   app.add_flag("--version,-V", version, "Prints version info and exits");
-  app.add_option("--detector-type,-d",
-                 detector_type,
-                 "The type of detector to serve")->required();
+  app.add_option("--detectors_arg,-d",
+                 detectors_arg,
+                 "Comma-separated string containing names of detectors_arg to serve")->required();
   app.add_option("--port,-p",
                  port_num,
                  "Port for server to listen at",
@@ -50,7 +51,8 @@ int main(int argc, char **argv) {
   std::string address = absl::StrFormat("0.0.0.0:%d", port_num);
 
   try {
-    ObjDet::Grpc::ImageDetectionService service{detector_type};
+    std::vector<std::string> detectors_to_serve = absl::StrSplit(detectors_arg, ',');
+    ObjDet::Grpc::ImageDetectionService service{detectors_to_serve};
 
     grpc::ServerBuilder builder;
     builder.AddListeningPort(address, grpc::InsecureServerCredentials());

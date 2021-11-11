@@ -14,10 +14,10 @@ class ImageDetectionStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.GetDetectableObjects = channel.unary_unary(
-                '/ObjDet.Grpc.ImageDetection/GetDetectableObjects',
-                request_serializer=image__detection__pb2.DetectableObjectsRequest.SerializeToString,
-                response_deserializer=image__detection__pb2.DetectableObjectsResponse.FromString,
+        self.ListAvailableDetectors = channel.unary_unary(
+                '/ObjDet.Grpc.ImageDetection/ListAvailableDetectors',
+                request_serializer=image__detection__pb2.AvailableDetectorsRequest.SerializeToString,
+                response_deserializer=image__detection__pb2.AvailableDetectorsResponse.FromString,
                 )
         self.DetectImage = channel.unary_unary(
                 '/ObjDet.Grpc.ImageDetection/DetectImage',
@@ -34,25 +34,25 @@ class ImageDetectionStub(object):
 class ImageDetectionServicer(object):
     """Missing associated documentation comment in .proto file."""
 
-    def GetDetectableObjects(self, request, context):
-        """*
-        Returns the list of objects detectable by object detection model(s) in the server.
+    def ListAvailableDetectors(self, request, context):
+        """
+        Returns list of detectors and the objects they detect.
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def DetectImage(self, request, context):
-        """*
-        Runs object detector(s) on the provided image and returns detections.
+        """
+        Runs specified object detector on the provided image and returns detections.
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def DetectMultipleImages(self, request_iterator, context):
-        """*
-        Processes a stream of one or more images through object detector(s) and
+        """
+        Processes a stream of one or more images through specified object detector and
         returns list of detections for each image (in requested order).
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -62,10 +62,10 @@ class ImageDetectionServicer(object):
 
 def add_ImageDetectionServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'GetDetectableObjects': grpc.unary_unary_rpc_method_handler(
-                    servicer.GetDetectableObjects,
-                    request_deserializer=image__detection__pb2.DetectableObjectsRequest.FromString,
-                    response_serializer=image__detection__pb2.DetectableObjectsResponse.SerializeToString,
+            'ListAvailableDetectors': grpc.unary_unary_rpc_method_handler(
+                    servicer.ListAvailableDetectors,
+                    request_deserializer=image__detection__pb2.AvailableDetectorsRequest.FromString,
+                    response_serializer=image__detection__pb2.AvailableDetectorsResponse.SerializeToString,
             ),
             'DetectImage': grpc.unary_unary_rpc_method_handler(
                     servicer.DetectImage,
@@ -88,7 +88,7 @@ class ImageDetection(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def GetDetectableObjects(request,
+    def ListAvailableDetectors(request,
             target,
             options=(),
             channel_credentials=None,
@@ -98,9 +98,9 @@ class ImageDetection(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/ObjDet.Grpc.ImageDetection/GetDetectableObjects',
-            image__detection__pb2.DetectableObjectsRequest.SerializeToString,
-            image__detection__pb2.DetectableObjectsResponse.FromString,
+        return grpc.experimental.unary_unary(request, target, '/ObjDet.Grpc.ImageDetection/ListAvailableDetectors',
+            image__detection__pb2.AvailableDetectorsRequest.SerializeToString,
+            image__detection__pb2.AvailableDetectorsResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 

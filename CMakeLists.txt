@@ -51,6 +51,8 @@ target_link_libraries(objdet-server-core PUBLIC
         absl::strings
         absl::str_format
         onnxruntime)
+target_compile_options(objdet-server-core PUBLIC -O0 -g --coverage)
+target_link_options(objdet-server-core PUBLIC --coverage)
 
 add_executable(grpc-objdet-server src/main.cc)
 target_include_directories(grpc-objdet-server PUBLIC libs/CLI11/include)

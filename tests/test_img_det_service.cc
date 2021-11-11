@@ -143,11 +143,13 @@ TEST(ImageDetectionListAvailableDetectorsTest, ReturnsRegisteredOnnxYoloV4CocoDe
     ASSERT_EQ(received_labels, expected_labels);
 }
 
-TEST(ImageDetectionDetectImageTest, ReturnsDetections) {
-  ObjDet::Grpc::ImageDetectionService service{"cascade_face_detector"};
+TEST(ImageDetectionDetectImageTest, ServiceWithOneRegisteredDetectorReturnsDetections) {
+  ObjDet::Grpc::ImageDetectionService service("cascade_face_detector");
   grpc::ServerContext context;
   ObjDet::Grpc::ImageDetectionRequest request;
   ObjDet::Grpc::ImageDetectionResponse response;
+
+  request.set_detector_name("cascade_face_detector");
 
   std::streampos img_size;
   char *img_buffer;
@@ -160,8 +162,6 @@ TEST(ImageDetectionDetectImageTest, ReturnsDetections) {
     img_file.read(img_buffer, img_size);
     img_file.close();
     request.set_image(img_buffer, img_size);
-    std::cout << "Request populated with image " << "tests/data/faces.jpg" << " of size "
-              << img_size << std::endl;
     delete[] img_buffer;
   } else {
     std::cout << "Could not open image file!\n";
@@ -171,4 +171,40 @@ TEST(ImageDetectionDetectImageTest, ReturnsDetections) {
 
   ASSERT_TRUE(status.ok());
   EXPECT_GT(response.detections().size(), 0);
+}
+
+
+TEST(ImageDetectionDetectImageTest, ServiceWithMultipleRegisteredDetectorsRunsSpecifiedDetector) {
+  ObjDet::Grpc::ImageDetectionService service{"cascade_face_detector", "onnx_yolov4_coco"};
+  grpc::ServerContext context;
+  ObjDet::Grpc::ImageDetectionRequest request;
+  ObjDet::Grpc::ImageDetectionResponse response;
+
+  request.set_detector_name("onnx_yolov4_coco");
+
+  std::streampos img_size;
+  char *img_buffer;
+  std::ifstream img_file("tests/data/horses.jpg",
+                         std::ios::in | std::ios::binary | std::ios::ate);
+  if (img_file.is_open()) {
+    img_size = img_file.tellg();
+    img_buffer = new char[img_size];
+    img_file.seekg(0, std::ios::beg);
+    img_file.read(img_buffer, img_size);
+    img_file.close();
+    request.set_image(img_buffer, img_size);
+    delete[] img_buffer;
+  } else {
+    std::cout << "Could not open image file!\n";
+  }
+
+  grpc::Status status = service.DetectImage(&context, &request, &response);
+
+  ASSERT_TRUE(status.ok());
+
+  auto& detections = response.detections();
+  ASSERT_EQ(detections.size(), 5);
+  for (const auto& det : detections) {
+     ASSERT_EQ(det.object_name(), "horse");
+  }
 }
