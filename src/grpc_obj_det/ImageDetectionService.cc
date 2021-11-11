@@ -60,7 +60,6 @@ grpc::Status ObjDet::Grpc::ImageDetectionService::ListAvailableDetectors(::grpc:
                                                                          const ::ObjDet::Grpc::AvailableDetectorsRequest *request,
                                                                          ::ObjDet::Grpc::AvailableDetectorsResponse *response) {
   LOG_F(INFO, "ListAvailableDetectors request received");
-
   for (const auto& detector: detectors) {
     ObjDet::Grpc::DetectorInfo *detector_info = response->add_detectors();
 
