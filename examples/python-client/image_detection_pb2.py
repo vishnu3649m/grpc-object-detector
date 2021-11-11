@@ -19,15 +19,15 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x15image_detection.proto\x12\x0bObjDet.Grpc\"\x1a\n\x18\x44\x65tectableObjectsRequest\"5\n\x19\x44\x65tectableObjectsResponse\x12\x18\n\x10\x61vailable_object\x18\x01 \x03(\t\"&\n\x15ImageDetectionRequest\x12\r\n\x05image\x18\x01 \x01(\x0c\"{\n\tDetection\x12\x13\n\x0bobject_name\x18\x01 \x01(\t\x12\x12\n\nconfidence\x18\x03 \x01(\x02\x12\x12\n\ntop_left_x\x18\x05 \x01(\x05\x12\x12\n\ntop_left_y\x18\x07 \x01(\x05\x12\r\n\x05width\x18\t \x01(\x05\x12\x0e\n\x06height\x18\x0b \x01(\x05\"D\n\x16ImageDetectionResponse\x12*\n\ndetections\x18\x01 \x03(\x0b\x32\x16.ObjDet.Grpc.Detection2\xba\x02\n\x0eImageDetection\x12g\n\x14GetDetectableObjects\x12%.ObjDet.Grpc.DetectableObjectsRequest\x1a&.ObjDet.Grpc.DetectableObjectsResponse\"\x00\x12X\n\x0b\x44\x65tectImage\x12\".ObjDet.Grpc.ImageDetectionRequest\x1a#.ObjDet.Grpc.ImageDetectionResponse\"\x00\x12\x65\n\x14\x44\x65tectMultipleImages\x12\".ObjDet.Grpc.ImageDetectionRequest\x1a#.ObjDet.Grpc.ImageDetectionResponse\"\x00(\x01\x30\x01\x62\x06proto3'
+  serialized_pb=b'\n\x15image_detection.proto\x12\x0bObjDet.Grpc\"\x1b\n\x19\x41vailableDetectorsRequest\"E\n\x0c\x44\x65tectorInfo\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\r\n\x05model\x18\x03 \x01(\t\x12\x18\n\x10\x64\x65tected_objects\x18\x05 \x03(\t\"J\n\x1a\x41vailableDetectorsResponse\x12,\n\tdetectors\x18\x01 \x03(\x0b\x32\x19.ObjDet.Grpc.DetectorInfo\"&\n\x15ImageDetectionRequest\x12\r\n\x05image\x18\x01 \x01(\x0c\"{\n\tDetection\x12\x13\n\x0bobject_name\x18\x01 \x01(\t\x12\x12\n\nconfidence\x18\x03 \x01(\x02\x12\x12\n\ntop_left_x\x18\x05 \x01(\x05\x12\x12\n\ntop_left_y\x18\x07 \x01(\x05\x12\r\n\x05width\x18\t \x01(\x05\x12\x0e\n\x06height\x18\x0b \x01(\x05\"D\n\x16ImageDetectionResponse\x12*\n\ndetections\x18\x01 \x03(\x0b\x32\x16.ObjDet.Grpc.Detection2\xbe\x02\n\x0eImageDetection\x12k\n\x16ListAvailableDetectors\x12&.ObjDet.Grpc.AvailableDetectorsRequest\x1a\'.ObjDet.Grpc.AvailableDetectorsResponse\"\x00\x12X\n\x0b\x44\x65tectImage\x12\".ObjDet.Grpc.ImageDetectionRequest\x1a#.ObjDet.Grpc.ImageDetectionResponse\"\x00\x12\x65\n\x14\x44\x65tectMultipleImages\x12\".ObjDet.Grpc.ImageDetectionRequest\x1a#.ObjDet.Grpc.ImageDetectionResponse\"\x00(\x01\x30\x01\x62\x06proto3'
 )
 
 
 
 
-_DETECTABLEOBJECTSREQUEST = _descriptor.Descriptor(
-  name='DetectableObjectsRequest',
-  full_name='ObjDet.Grpc.DetectableObjectsRequest',
+_AVAILABLEDETECTORSREQUEST = _descriptor.Descriptor(
+  name='AvailableDetectorsRequest',
+  full_name='ObjDet.Grpc.AvailableDetectorsRequest',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
@@ -46,21 +46,35 @@ _DETECTABLEOBJECTSREQUEST = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=38,
-  serialized_end=64,
+  serialized_end=65,
 )
 
 
-_DETECTABLEOBJECTSRESPONSE = _descriptor.Descriptor(
-  name='DetectableObjectsResponse',
-  full_name='ObjDet.Grpc.DetectableObjectsResponse',
+_DETECTORINFO = _descriptor.Descriptor(
+  name='DetectorInfo',
+  full_name='ObjDet.Grpc.DetectorInfo',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='available_object', full_name='ObjDet.Grpc.DetectableObjectsResponse.available_object', index=0,
-      number=1, type=9, cpp_type=9, label=3,
+      name='name', full_name='ObjDet.Grpc.DetectorInfo.name', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='model', full_name='ObjDet.Grpc.DetectorInfo.model', index=1,
+      number=3, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='detected_objects', full_name='ObjDet.Grpc.DetectorInfo.detected_objects', index=2,
+      number=5, type=9, cpp_type=9, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -77,8 +91,40 @@ _DETECTABLEOBJECTSRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=66,
-  serialized_end=119,
+  serialized_start=67,
+  serialized_end=136,
+)
+
+
+_AVAILABLEDETECTORSRESPONSE = _descriptor.Descriptor(
+  name='AvailableDetectorsResponse',
+  full_name='ObjDet.Grpc.AvailableDetectorsResponse',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='detectors', full_name='ObjDet.Grpc.AvailableDetectorsResponse.detectors', index=0,
+      number=1, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=138,
+  serialized_end=212,
 )
 
 
@@ -109,8 +155,8 @@ _IMAGEDETECTIONREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=121,
-  serialized_end=159,
+  serialized_start=214,
+  serialized_end=252,
 )
 
 
@@ -176,8 +222,8 @@ _DETECTION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=161,
-  serialized_end=284,
+  serialized_start=254,
+  serialized_end=377,
 )
 
 
@@ -208,31 +254,40 @@ _IMAGEDETECTIONRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=286,
-  serialized_end=354,
+  serialized_start=379,
+  serialized_end=447,
 )
 
+_AVAILABLEDETECTORSRESPONSE.fields_by_name['detectors'].message_type = _DETECTORINFO
 _IMAGEDETECTIONRESPONSE.fields_by_name['detections'].message_type = _DETECTION
-DESCRIPTOR.message_types_by_name['DetectableObjectsRequest'] = _DETECTABLEOBJECTSREQUEST
-DESCRIPTOR.message_types_by_name['DetectableObjectsResponse'] = _DETECTABLEOBJECTSRESPONSE
+DESCRIPTOR.message_types_by_name['AvailableDetectorsRequest'] = _AVAILABLEDETECTORSREQUEST
+DESCRIPTOR.message_types_by_name['DetectorInfo'] = _DETECTORINFO
+DESCRIPTOR.message_types_by_name['AvailableDetectorsResponse'] = _AVAILABLEDETECTORSRESPONSE
 DESCRIPTOR.message_types_by_name['ImageDetectionRequest'] = _IMAGEDETECTIONREQUEST
 DESCRIPTOR.message_types_by_name['Detection'] = _DETECTION
 DESCRIPTOR.message_types_by_name['ImageDetectionResponse'] = _IMAGEDETECTIONRESPONSE
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
-DetectableObjectsRequest = _reflection.GeneratedProtocolMessageType('DetectableObjectsRequest', (_message.Message,), {
-  'DESCRIPTOR' : _DETECTABLEOBJECTSREQUEST,
+AvailableDetectorsRequest = _reflection.GeneratedProtocolMessageType('AvailableDetectorsRequest', (_message.Message,), {
+  'DESCRIPTOR' : _AVAILABLEDETECTORSREQUEST,
   '__module__' : 'image_detection_pb2'
-  # @@protoc_insertion_point(class_scope:ObjDet.Grpc.DetectableObjectsRequest)
+  # @@protoc_insertion_point(class_scope:ObjDet.Grpc.AvailableDetectorsRequest)
   })
-_sym_db.RegisterMessage(DetectableObjectsRequest)
+_sym_db.RegisterMessage(AvailableDetectorsRequest)
 
-DetectableObjectsResponse = _reflection.GeneratedProtocolMessageType('DetectableObjectsResponse', (_message.Message,), {
-  'DESCRIPTOR' : _DETECTABLEOBJECTSRESPONSE,
+DetectorInfo = _reflection.GeneratedProtocolMessageType('DetectorInfo', (_message.Message,), {
+  'DESCRIPTOR' : _DETECTORINFO,
   '__module__' : 'image_detection_pb2'
-  # @@protoc_insertion_point(class_scope:ObjDet.Grpc.DetectableObjectsResponse)
+  # @@protoc_insertion_point(class_scope:ObjDet.Grpc.DetectorInfo)
   })
-_sym_db.RegisterMessage(DetectableObjectsResponse)
+_sym_db.RegisterMessage(DetectorInfo)
+
+AvailableDetectorsResponse = _reflection.GeneratedProtocolMessageType('AvailableDetectorsResponse', (_message.Message,), {
+  'DESCRIPTOR' : _AVAILABLEDETECTORSRESPONSE,
+  '__module__' : 'image_detection_pb2'
+  # @@protoc_insertion_point(class_scope:ObjDet.Grpc.AvailableDetectorsResponse)
+  })
+_sym_db.RegisterMessage(AvailableDetectorsResponse)
 
 ImageDetectionRequest = _reflection.GeneratedProtocolMessageType('ImageDetectionRequest', (_message.Message,), {
   'DESCRIPTOR' : _IMAGEDETECTIONREQUEST,
@@ -264,16 +319,16 @@ _IMAGEDETECTION = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=357,
-  serialized_end=671,
+  serialized_start=450,
+  serialized_end=768,
   methods=[
   _descriptor.MethodDescriptor(
-    name='GetDetectableObjects',
-    full_name='ObjDet.Grpc.ImageDetection.GetDetectableObjects',
+    name='ListAvailableDetectors',
+    full_name='ObjDet.Grpc.ImageDetection.ListAvailableDetectors',
     index=0,
     containing_service=None,
-    input_type=_DETECTABLEOBJECTSREQUEST,
-    output_type=_DETECTABLEOBJECTSRESPONSE,
+    input_type=_AVAILABLEDETECTORSREQUEST,
+    output_type=_AVAILABLEDETECTORSRESPONSE,
     serialized_options=None,
     create_key=_descriptor._internal_create_key,
   ),
