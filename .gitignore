@@ -38,6 +38,7 @@
 cmake-build*
 
 # local dev environment
+local/
 .dev
 dev.Dockerfile
 
@@ -48,3 +49,6 @@ protos/build
 *.weights
 *.pth
 *.tar.gz
+
+# Python
+__pycache__
