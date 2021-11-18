@@ -9,6 +9,7 @@
 
 #include "FaceEyesDetector.h"
 #include "OnnxYoloV4Detector.h"
+#include "RandomPokemonDetector.h"
 
 namespace ObjDet {
 
@@ -26,6 +27,8 @@ class DetectorFactory {
                                          "config/onnx_yolov4/yolov4.onnx",
                                          "config/onnx_yolov4/yolov4_anchors.txt",
                                          "config/onnx_yolov4/coco_labels.txt"));
+    } else if (name == "random_pokemon") {
+      return std::unique_ptr<ObjDet::DetectorInterface>(new ObjDet::RandomPokemonDetector());
     } else {
       return std::unique_ptr<ObjDet::DetectorInterface>(nullptr);
     }
